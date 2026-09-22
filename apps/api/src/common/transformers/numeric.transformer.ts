@@ -1,8 +1,10 @@
 import type { ValueTransformer } from 'typeorm';
 
 export class NumericTransformer implements ValueTransformer {
-  to(value: number | null): string | null {
-    if (value === null) {
+  // undefined matters as much as null: a criterion that carries no salary range
+  // simply never assigns these fields, so they reach the driver as undefined.
+  to(value: number | null | undefined): string | null {
+    if (value === null || value === undefined) {
       return null;
     }
     if (!Number.isFinite(value)) {
