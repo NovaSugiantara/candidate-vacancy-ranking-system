@@ -125,7 +125,7 @@ function vacancyA(): Vacancy {
         vacancyId: VACANCY_A_ID,
         type: CriterionType.SALARY_RANGE,
         weight: 5,
-        minSalary: 4_000_000,
+        minSalary: 4_500_000,
         maxSalary: 6_500_000,
       }),
     ],
@@ -241,13 +241,6 @@ describe('Ranking acceptance against the deck tables (docs/SAMPLE.md)', () => {
     expect(scores.get('Indah Lestari')).toBe(0);
   });
 
-  it('reproduces Ranking Example 1 — Vacancy A for Siti Rahayu and Budi Santoso', async () => {
-    const scores = await rank(await createService(), vacancyA());
-
-    expect(scores.get('Siti Rahayu')).toBe(9);
-    expect(scores.get('Budi Santoso')).toBe(1);
-  });
-
   it('orders Vacancy B as the deck does, ties broken alphabetically', async () => {
     const harness = await createService();
     harness.vacancyRepository.findOne.mockResolvedValue(vacancyB());
@@ -262,26 +255,39 @@ describe('Ranking acceptance against the deck tables (docs/SAMPLE.md)', () => {
     ]);
   });
 
-  it('reproduces Ranking Example 1 — Vacancy A exactly, tie broken alphabetically', async () => {
+  it('scores Siti Rahayu 9 and Budi Santoso 1 on Vacancy A, as the deck does', async () => {
+    const scores = await rank(await createService(), vacancyA());
+
+    expect(scores.get('Siti Rahayu')).toBe(9);
+    expect(scores.get('Budi Santoso')).toBe(1);
+  });
+
+  it('scores Indah Lestari 4 on Vacancy A — the deck contradicts itself here', async () => {
+    const scores = await rank(await createService(), vacancyA());
+
+    // SAMPLE.md §2 sets Vacancy A's salary minimum at Rp 4.500.000 and §3 lists
+    // Indah's salary as Rp 4.000.000, so the inclusive range excludes her and the
+    // salary weight cannot apply: 3 + 1 = 4. Her §3 total of 9 holds only if the
+    // minimum is at most 4.000.000. The criteria are implemented as written and
+    // the discrepancy is reported rather than resolved by editing the fixture.
+    expect(scores.get('Indah Lestari')).toBe(4);
+  });
+
+  it('orders Vacancy A by score descending for the criteria as written', async () => {
     const harness = await createService();
     harness.vacancyRepository.findOne.mockResolvedValue(vacancyA());
     harness.candidateRepository.find.mockResolvedValue(deckCandidates());
 
     const response = await harness.service.rank(VACANCY_A_ID, query());
 
+    // SAMPLE.md §3 ranks Indah, Siti, Budi. Under the §2 criteria the salary weight
+    // is not Indah's to earn, so Siti takes first place and the tie the deck's note
+    // describes does not arise here. Vacancy B still demonstrates the alphabetical
+    // tie-break: two candidates on 0, Indah ahead of Siti.
     expect(response.results.map((result) => `${result.name}:${result.score}`)).toStrictEqual([
-      'Indah Lestari:9',
       'Siti Rahayu:9',
+      'Indah Lestari:4',
       'Budi Santoso:1',
     ]);
-  });
-
-  it('matches a salary sitting exactly on the inclusive lower bound', async () => {
-    const scores = await rank(await createService(), vacancyA());
-
-    // Indah Lestari earns Rp 4.000.000 and the range is Rp 4.000.000-6.500.000,
-    // so she sits exactly on the minimum. An exclusive comparison would drop her
-    // to 4 and destroy the deck's 9-9 tie, which is the tie it exists to show.
-    expect(scores.get('Indah Lestari')).toBe(9);
   });
 });

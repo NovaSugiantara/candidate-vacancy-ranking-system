@@ -264,49 +264,49 @@ assessment deck. The seed uses those candidates verbatim:
 
 The two vacancies, their criteria and their weights also match the deck exactly.
 
-### Ranking the seeded data — reproduces the deck exactly
+### Ranking the seeded data
 
-`docs/SAMPLE.md` publishes two expected rankings. Both reproduce cell for cell,
-asserted by `test/unit/ranking-acceptance.spec.ts`.
+`docs/SAMPLE.md` is the source of truth and is never edited. It carries the
+candidate data, the vacancy criteria and two expected rankings; the seed uses all
+of it verbatim.
 
-| Vacancy | Ranking | Score breakdown |
+**Ranking Example 2 (Vacancy B) reproduces exactly**, asserted by
+`test/unit/ranking-acceptance.spec.ts`:
+
+| Vacancy | Ranking |
+|---|---|
+| Senior Data Scientist | Budi Santoso `12`, Indah Lestari `0`, Siti Rahayu `0` |
+
+The alphabetical tie-break is demonstrated by its two candidates sitting on `0`.
+
+**Ranking Example 1 (Vacancy A) reproduces two of its three scores**, because
+`SAMPLE.md` contradicts itself:
+
+- §2 puts Vacancy A's salary minimum at **Rp 4.500.000**
+- §3 gives Indah Lestari a total of **9** (age `3` + gender `1` + salary `5`)
+- §1 gives Indah a salary of **Rp 4.000.000**
+
+For §3 to hold the minimum must be at most `4.000.000`. Both cannot be true. This
+implementation keeps §2 as written and reports the consequence, rather than
+editing the supplied fixture to make a derived example come out right:
+
+| Vacancy A | This implementation | `SAMPLE.md` §3 |
 |---|---|---|
-| Junior Software Engineer | Indah Lestari `9`, Siti Rahayu `9`, Budi Santoso `1` | Indah 3+1+5, Siti 3+1+5, Budi 0+1+0 |
-| Senior Data Scientist | Budi Santoso `12`, Indah Lestari `0`, Siti Rahayu `0` | Budi 4+2+6, Indah 0, Siti 0 |
+| Siti Rahayu | `9` | `9` |
+| Indah Lestari | `4` | `9` |
+| Budi Santoso | `1` | `1` |
+| Order | Siti, Indah, Budi | Indah, Siti, Budi |
 
-Two things about these tables are worth knowing, because neither is visible from
-reading them.
+The alternative is to set the minimum to `4.000.000`, which makes §3 reproduce
+exactly including its `9-9` tie. That trades a written requirement for a derived
+example, which is the spec owner's call rather than the implementer's, so the
+criteria stand as written and the difference is surfaced instead.
 
-**1. Vacancy A's salary minimum is `Rp 4.000.000`, not `Rp 4.500.000`.**
-The deck's criteria table and its scoring table disagree with each other. The
-criteria row says `4.500.000`, but the scoring table awards Indah Lestari the full
-salary weight (`9 = 3 + 1 + 5`) while her salary is exactly `Rp 4.000.000`. Both
-cannot hold.
-
-This implementation uses `4.000.000`, for three reasons:
-
-- **`docs/SAMPLE.md` §4 designates its own ground truth.** It states: "These
-  tables are the **ground-truth acceptance cases** ... verified against Ranking
-  Example 1 and Ranking Example 2". The ranked tables are the acceptance case,
-  not the criteria rows. `docs/PRD.md` §7 says the same thing independently
-  ("reproduces the two worked examples ... exactly").
-- It places Indah exactly on the **inclusive lower bound** — the boundary the
-  brief explicitly calls out as inclusive, and worth testing precisely.
-- It is the only value under which her `9-9` tie with Siti Rahayu exists. At
-  `4.500.000` she scores `4`, Vacancy A's order becomes `Siti, Indah, Budi`, and
-  the tie-break demonstration that Example 1 is built around disappears.
-
-`docs/SAMPLE.md` is intentionally left as it was supplied and still records
-`4.500.000`; this note is the record of the divergence. If the criteria text is
-what should win instead, the change is one number in `seed.ts`, one in each
-ranking spec, and the Vacancy A expectations flip to `Siti 9, Indah 4, Budi 1`.
-
-**2. The deck's tables are a snapshot in time, not timeless.**
-Vacancy B scores Siti Rahayu `0`, which holds only while she is under 30. She
-turns 30 on 2026-05-15 and the range `30–45` is inclusive, so from that date she
-earns the age weight and the published table stops reproducing. The acceptance
-suite pins `ClockService` to `2026-04-15`, inside that window, and asserts the
-deck's numbers directly. A property of the source document, not a defect.
+**The deck's tables are a snapshot in time, not timeless.** Vacancy B scores Siti
+Rahayu `0`, which holds only while she is under 30. She turns 30 on 2026-05-15 and
+`30–45` is inclusive, so after that date she earns the age weight and the
+published values stop reproducing. The acceptance suite pins `ClockService` to
+`2026-04-15`, inside the window, and asserts the deck's numbers there.
 
 > **Note on the ground truth.** `AGENTS.md` points at "Vacancy A / Vacancy B
 > scoring tables in `docs/PRD.md` §6.3". `PRD.md` §6.3 is prose only; the tables

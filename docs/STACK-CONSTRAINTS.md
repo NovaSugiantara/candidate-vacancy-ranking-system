@@ -262,33 +262,33 @@ Anything not in the allowed `sortBy` list is rejected with `400` — never inter
 **Vacancy A — "Junior Software Engineer":** AGE 22–30 w3, GENDER ANY w1, SALARY 4.0M–6.5M w5.
 **Vacancy B — "Senior Data Scientist":** AGE 30–45 w4, GENDER MALE w2, SALARY 7.5M–10M w6.
 
-### EXPECTED RANKINGS — all twelve deck cells reproduce
+### EXPECTED RANKINGS
 
-The ground truth is the scoring tables, which is also what `docs/PRD.md` §7 makes the
-acceptance criterion. `docs/PRD.md` §6.3 is prose only, despite `AGENTS.md` citing it.
+`docs/SAMPLE.md` is the source of truth and is never edited. The criteria below are
+implemented exactly as it writes them; `docs/PRD.md` §6.3 is prose only, despite
+`AGENTS.md` citing it.
 
-| Vacancy | Ranking |
-|---|---|
-| Junior Software Engineer | Indah Lestari `9`, Siti Rahayu `9`, Budi Santoso `1` |
-| Senior Data Scientist | Budi Santoso `12`, Indah Lestari `0`, Siti Rahayu `0` |
+| Vacancy | This implementation | `SAMPLE.md` §3 |
+|---|---|---|
+| Junior Software Engineer | Siti Rahayu `9`, Indah Lestari `4`, Budi Santoso `1` | Indah `9`, Siti `9`, Budi `1` |
+| Senior Data Scientist | Budi Santoso `12`, Indah Lestari `0`, Siti Rahayu `0` | Budi `12`, Indah `0`, Siti `0` |
 
 Two properties of these tables are not visible by reading them:
 
-1. **Vacancy A's salary minimum is `4.000.000`, not `4.500.000`.** The deck's criteria
-   row and its scoring table contradict each other: the row says `4.500.000`, the table
-   awards Indah Lestari the salary weight while her salary is exactly `4.000.000`.
-   `4.000.000` is used because `docs/SAMPLE.md` §4 designates its own ranked tables as
-   "the ground-truth acceptance cases" (and `docs/PRD.md` §7 agrees), because it puts her
-   exactly on the inclusive lower bound, and because it is the only value under which her
-   `9-9` tie with Siti Rahayu — the tie Example 1 exists to demonstrate — occurs at all.
-   `docs/SAMPLE.md` is left unedited and still shows `4.500.000`; this is the record of
-   the divergence.
+1. **`SAMPLE.md` contradicts itself on Vacancy A.** §2 sets the salary minimum at
+   `4.500.000`; §1 gives Indah Lestari `4.000.000`; §3 scores her `9`, which needs the
+   salary weight. Both §2 and §3 cannot hold. §2 is implemented as written — changing a
+   stated requirement so that a derived example reproduces is the spec owner's call, not
+   the implementer's — so Indah scores `4` and Vacancy A's order becomes Siti, Indah,
+   Budi. Setting the minimum to `4.000.000` would make §3 reproduce exactly, including
+   its `9-9` tie; that is a one-number change if the spec owner decides it.
 2. **The tables are a snapshot in time.** Vacancy B publishes Siti Rahayu as `0`, which
    holds only while she is under 30. She turns 30 on 2026-05-15 and `30–45` is inclusive,
    so from that date she earns the age weight and the published values stop reproducing.
 
-The acceptance test lives in `apps/api/test/unit/ranking-acceptance.spec.ts`, pinned to
-`2026-04-15`, and asserts the deck's numbers directly.
+The alphabetical tie-break is still exercised: Vacancy B has two candidates on `0`,
+Indah ahead of Siti. The acceptance test lives in
+`apps/api/test/unit/ranking-acceptance.spec.ts`, pinned to `2026-04-15`.
 
 ### Soft delete
 Candidates are soft-deleted (`deleted_at`). Email uniqueness is a **partial unique index
