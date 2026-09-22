@@ -29,3 +29,9 @@ coverage/
 
 # Agent instruction file (local)
 AGENTS.md
+
+# Local working documents. Only README.md and docs/SAMPLE.md are part of the
+# submitted deliverable.
+docs/PRD.md
+docs/SRS.md
+docs/STACK-CONSTRAINTS.md

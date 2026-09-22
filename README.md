@@ -30,9 +30,12 @@ vacancy's weighted criteria using a pluggable strategy registry.
 
 **TypeScript is pinned to 6.0.3 on purpose.** `typescript@latest` is 7.0.2, but
 `ts-jest` declares `typescript: ">=4.3 <7"` and `@nestjs/cli@12` depends on
-`~6.0.2`. Installing the latest breaks both the build and the test runner. See
-`docs/STACK-CONSTRAINTS.md` for the full version rationale and the breaking-change
-traps this repo already accounts for.
+`~6.0.2`, so installing the latest breaks both the build and the test runner.
+TypeScript 6 also dropped implicit `@types` inclusion and now requires an explicit
+`rootDir`; both are set explicitly in the app tsconfig. The other pins are
+deliberate for the same reason: TypeORM 1.x moved `relations` and `select` to
+object-only syntax and removed `.env` autoloading, and React Router 8 no longer
+ships `react-router-dom`.
 
 ---
 
@@ -266,51 +269,48 @@ The two vacancies, their criteria and their weights also match the deck exactly.
 
 ### Ranking the seeded data
 
-`docs/SAMPLE.md` is the source of truth and is never edited. It carries the
-candidate data, the vacancy criteria and two expected rankings; the seed uses all
-of it verbatim.
+`docs/SAMPLE.md` carries the candidate data, the vacancy criteria and two worked
+rankings. The seed uses all of it verbatim, and the criteria are implemented
+exactly as it writes them.
 
-**Ranking Example 2 (Vacancy B) reproduces exactly**, asserted by
-`test/unit/ranking-acceptance.spec.ts`:
-
-| Vacancy | Ranking |
+| Vacancy | Ranking produced |
 |---|---|
+| Junior Software Engineer | Siti Rahayu `9`, Indah Lestari `4`, Budi Santoso `1` |
 | Senior Data Scientist | Budi Santoso `12`, Indah Lestari `0`, Siti Rahayu `0` |
 
-The alphabetical tie-break is demonstrated by its two candidates sitting on `0`.
+Ranking Example 2 (Vacancy B) reproduces its published table exactly, and the
+alphabetical tie-break is demonstrated there: two candidates on `0`, Indah Lestari
+ahead of Siti Rahayu. Both are asserted by
+`test/unit/ranking-acceptance.spec.ts`.
 
-**Ranking Example 1 (Vacancy A) reproduces two of its three scores**, because
-`SAMPLE.md` contradicts itself:
+Ranking Example 1 (Vacancy A) matches on Siti Rahayu `9` and Budi Santoso `1`.
+The third row differs, and the reason is arithmetic rather than interpretation —
+`SAMPLE.md` supplies:
 
-- §2 puts Vacancy A's salary minimum at **Rp 4.500.000**
-- §3 gives Indah Lestari a total of **9** (age `3` + gender `1` + salary `5`)
-- §1 gives Indah a salary of **Rp 4.000.000**
+- Vacancy A's salary minimum as **Rp 4.500.000** (§2)
+- Indah Lestari's salary as **Rp 4.000.000** (§1)
+- Indah Lestari's published total as **9**, which includes the salary weight (§3)
 
-For §3 to hold the minimum must be at most `4.000.000`. Both cannot be true. This
-implementation keeps §2 as written and reports the consequence, rather than
-editing the supplied fixture to make a derived example come out right:
+`Rp 4.000.000` sits below the `Rp 4.500.000` minimum, so an inclusive range
+excludes her and the salary weight cannot apply: `3 + 1 = 4`. The published `9`
+requires a minimum of `4.000.000` or less.
 
-| Vacancy A | This implementation | `SAMPLE.md` §3 |
+The written criteria are what the implementation follows. Lowering the minimum to
+`4.000.000` would make the published Vacancy A table reproduce in full, including
+its `9-9` tie; that is a one-number change in the seed and the two ranking specs
+if it is preferred.
+
+| Vacancy A | Produced | Published |
 |---|---|---|
 | Siti Rahayu | `9` | `9` |
 | Indah Lestari | `4` | `9` |
 | Budi Santoso | `1` | `1` |
 | Order | Siti, Indah, Budi | Indah, Siti, Budi |
 
-The alternative is to set the minimum to `4.000.000`, which makes §3 reproduce
-exactly including its `9-9` tie. That trades a written requirement for a derived
-example, which is the spec owner's call rather than the implementer's, so the
-criteria stand as written and the difference is surfaced instead.
-
-**The deck's tables are a snapshot in time, not timeless.** Vacancy B scores Siti
-Rahayu `0`, which holds only while she is under 30. She turns 30 on 2026-05-15 and
-`30–45` is inclusive, so after that date she earns the age weight and the
-published values stop reproducing. The acceptance suite pins `ClockService` to
-`2026-04-15`, inside the window, and asserts the deck's numbers there.
-
-> **Note on the ground truth.** `AGENTS.md` points at "Vacancy A / Vacancy B
-> scoring tables in `docs/PRD.md` §6.3". `PRD.md` §6.3 is prose only; the tables
-> themselves live in `docs/SAMPLE.md`.
+The rankings are also time-dependent. Vacancy B scores Siti Rahayu `0`, which
+holds while she is under 30; she turns 30 on 2026-05-15 and `30–45` is inclusive,
+so after that date she earns the age weight. The acceptance suite pins
+`ClockService` to `2026-04-15` and asserts the published numbers there.
 
 ---
 
@@ -465,8 +465,7 @@ apps/
 postman/
   jobseeker-technical-test.json
 docs/
-  PRD.md  SRS.md              source requirements
-  STACK-CONSTRAINTS.md        version matrix + breaking-change notes
+  SAMPLE.md                   assessment example data and expected rankings
 docker-compose.yml
 ```
 
@@ -476,15 +475,15 @@ docker-compose.yml
 
 **Deliberate deviations from the source docs, with reasons:**
 
-1. **Soft delete instead of hard delete.** `docs/PRD.md` §9 assumed hard delete,
-   but the brief requires ranking "all **active** candidates", which only means
-   something if candidates can be deactivated. Email uniqueness is therefore a
-   partial index so a deleted candidate releases its email.
-2. **A frontend was built.** `docs/PRD.md` §4 lists a UI as a non-goal. The later
-   brief mandates it, so the brief wins.
+1. **Soft delete instead of hard delete.** The product requirements assumed hard
+   delete, but the brief requires ranking "all **active** candidates", which only
+   means something if candidates can be deactivated. Email uniqueness is therefore
+   a partial index so a deleted candidate releases its email.
+2. **A frontend was built.** The original requirements list a UI as a non-goal.
+   The later brief mandates it, so the brief wins.
 3. **PostgreSQL 17 and Redis 8, not "PostgreSQL v8 / Redis v8".** Postgres 8 is a
    1998 release. The brief itself instructs using a modern stable version.
-4. **The PRD §6.3 acceptance tables do not exist.** See the note in §8.
+4. **Vacancy A's salary minimum follows the written criteria.** See §8.
 5. **No `@nestjs/config`, no cache-manager, no Recharts.** The first two were
    replaced by `dotenv` and a direct Redis client (the raw client is needed for
    per-vacancy key invalidation regardless); Recharts was optional in the brief
