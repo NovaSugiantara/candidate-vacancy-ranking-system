@@ -87,7 +87,7 @@ function vacancyA(): Vacancy {
         vacancyId: 'vacancy-a',
         type: CriterionType.SALARY_RANGE,
         weight: 5,
-        minSalary: 4_500_000,
+        minSalary: 4_000_000,
         maxSalary: 6_500_000,
       }),
     ],

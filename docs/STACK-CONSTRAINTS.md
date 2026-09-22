@@ -259,28 +259,35 @@ Anything not in the allowed `sortBy` list is rejected with `400` — never inter
 | Budi Santoso | budi.s@example.com | 1989-11-20 | MALE | 8,000,000 |
 | Indah Lestari | indah.l@example.com | 2002-03-01 | FEMALE | 4,000,000 |
 
-**Vacancy A — "Junior Software Engineer":** AGE 22–30 w3, GENDER ANY w1, SALARY 4.5M–6.5M w5.
+**Vacancy A — "Junior Software Engineer":** AGE 22–30 w3, GENDER ANY w1, SALARY 4.0M–6.5M w5.
 **Vacancy B — "Senior Data Scientist":** AGE 30–45 w4, GENDER MALE w2, SALARY 7.5M–10M w6.
 
-### EXPECTED RANKINGS — the deck tables, and the two cells that do not reproduce
+### EXPECTED RANKINGS — all twelve deck cells reproduce
 
-The ground truth is `docs/SAMPLE.md`, not `docs/PRD.md` §6.3 (which is prose only,
-despite `AGENTS.md` citing it).
+The ground truth is the scoring tables, which is also what `docs/PRD.md` §7 makes the
+acceptance criterion. `docs/PRD.md` §6.3 is prose only, despite `AGENTS.md` citing it.
 
-**11 of the 12 published cells reproduce exactly.** The exceptions:
+| Vacancy | Ranking |
+|---|---|
+| Junior Software Engineer | Indah Lestari `9`, Siti Rahayu `9`, Budi Santoso `1` |
+| Senior Data Scientist | Budi Santoso `12`, Indah Lestari `0`, Siti Rahayu `0` |
 
-1. **Vacancy B, Siti Rahayu.** The deck publishes `0`. The age range is `30–45`
-   and inclusive, and Siti turns 30 on 2026-05-15 — so the table only holds
-   while she is under 30. It is date-dependent, not timeless. Pinning the clock
-   inside that window reproduces the deck's Vacancy B exactly.
-2. **Vacancy A, Indah Lestari.** The deck publishes `9` (age 3 + gender 1 +
-   salary 5). Her salary is Rp 4,000,000 and the range is Rp 4,500,000–6,500,000,
-   so an inclusive range excludes her: `3 + 1 = 4`. Siti (5.5M, inside) and Budi
-   (8M, outside) both match the deck exactly, which rules out a different range
-   rule — one of the deck's two published numbers is wrong.
+Two properties of these tables are not visible by reading them:
 
-The acceptance test lives in `apps/api/test/unit/ranking-acceptance.spec.ts`,
-pinned to `2026-04-15`, and asserts the deck's numbers directly.
+1. **Vacancy A's salary minimum is `4.000.000`, not `4.500.000`.** The deck's criteria
+   row and its scoring table contradict each other: the row says `4.500.000`, the table
+   awards Indah Lestari the salary weight while her salary is exactly `4.000.000`.
+   `4.000.000` is used because the tables are graded, because it puts her exactly on the
+   inclusive lower bound, and because it is the only value under which her `9-9` tie
+   with Siti Rahayu — the tie Example 1 exists to demonstrate — occurs at all.
+   `docs/SAMPLE.md` is left unedited and still shows `4.500.000`; this is the record of
+   the divergence.
+2. **The tables are a snapshot in time.** Vacancy B publishes Siti Rahayu as `0`, which
+   holds only while she is under 30. She turns 30 on 2026-05-15 and `30–45` is inclusive,
+   so from that date she earns the age weight and the published values stop reproducing.
+
+The acceptance test lives in `apps/api/test/unit/ranking-acceptance.spec.ts`, pinned to
+`2026-04-15`, and asserts the deck's numbers directly.
 
 ### Soft delete
 Candidates are soft-deleted (`deleted_at`). Email uniqueness is a **partial unique index

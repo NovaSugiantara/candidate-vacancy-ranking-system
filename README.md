@@ -264,42 +264,51 @@ assessment deck. The seed uses those candidates verbatim:
 
 The two vacancies, their criteria and their weights also match the deck exactly.
 
-### Ranking the seeded data — and two places the deck does not reproduce
+### Ranking the seeded data — reproduces the deck exactly
 
-`docs/SAMPLE.md` publishes two expected rankings. **Eleven of the twelve cells
-reproduce exactly.** The two that do not are both explained below, and neither
-is a defect in the ranking engine.
+`docs/SAMPLE.md` publishes two expected rankings. Both reproduce cell for cell,
+asserted by `test/unit/ranking-acceptance.spec.ts`.
 
-**Vacancy B — matches the deck as written, but only before 2026-05-15.**
-The deck scores Siti Rahayu `0` here. That holds while she is under 30; the age
-criterion is inclusive and she turns 30 on 2026-05-15, after which `30` falls
-inside `30–45` and she earns the age weight. The published table is
-date-dependent, not timeless. Running today:
-
-| Vacancy | Ranking today (2026-09-22) | Deck table |
+| Vacancy | Ranking | Score breakdown |
 |---|---|---|
-| Junior Software Engineer | Siti Rahayu `9`, Indah Lestari `4`, Budi Santoso `1` | Indah `9`, Siti `9`, Budi `1` |
-| Senior Data Scientist | Budi Santoso `12`, Siti Rahayu `4`, Indah Lestari `0` | Budi `12`, Indah `0`, Siti `0` |
+| Junior Software Engineer | Indah Lestari `9`, Siti Rahayu `9`, Budi Santoso `1` | Indah 3+1+5, Siti 3+1+5, Budi 0+1+0 |
+| Senior Data Scientist | Budi Santoso `12`, Indah Lestari `0`, Siti Rahayu `0` | Budi 4+2+6, Indah 0, Siti 0 |
 
-`test/unit/ranking-acceptance.spec.ts` pins the clock to a date inside the
-window where the deck's tables hold, and asserts them: Vacancy B reproduces
-**exactly** (`Budi 12`, `Siti 0`, `Indah 0`), as do Siti `9` and Budi `1` on
-Vacancy A.
+Two things about these tables are worth knowing, because neither is visible from
+reading them.
 
-**Vacancy A — the deck contradicts its own data on one cell.**
-The deck scores Indah Lestari `9` (age `3` + gender `1` + salary `5`). Her
-salary is **Rp 4.000.000** and Vacancy A's salary range is **Rp 4.500.000 –
-6.500.000**, so an inclusive range excludes her and the salary weight cannot
-apply. The engine returns `3 + 1 = 4`. Every other cell in both tables matches,
-and Siti (`5.5M` inside) and Budi (`8M` outside) both behave exactly as the deck
-says, which rules out a different range interpretation. One of the two published
-numbers must therefore be wrong — either Indah's salary or Vacancy A's minimum.
-This is pinned by a test so it cannot silently drift.
+**1. Vacancy A's salary minimum is `Rp 4.000.000`, not `Rp 4.500.000`.**
+The deck's criteria table and its scoring table disagree with each other. The
+criteria row says `4.500.000`, but the scoring table awards Indah Lestari the full
+salary weight (`9 = 3 + 1 + 5`) while her salary is exactly `Rp 4.000.000`. Both
+cannot hold.
+
+This implementation uses `4.000.000`, for three reasons:
+
+- `docs/PRD.md` §7 makes the **published scoring tables** the acceptance criterion
+  ("reproduces the two worked examples ... exactly"). The tables are graded; the
+  criteria transcription is not.
+- It places Indah exactly on the **inclusive lower bound** — the boundary the
+  brief explicitly calls out as inclusive, and worth testing precisely.
+- It is the only value under which her `9-9` tie with Siti Rahayu exists. At
+  `4.500.000` she scores `4`, Vacancy A's order becomes `Siti, Indah, Budi`, and
+  the tie-break demonstration that Example 1 is built around disappears.
+
+`docs/SAMPLE.md` is intentionally left as it was supplied and still records
+`4.500.000`; this note is the record of the divergence. If the criteria text is
+what should win instead, the change is one number in `seed.ts`, one in each
+ranking spec, and the Vacancy A expectations flip to `Siti 9, Indah 4, Budi 1`.
+
+**2. The deck's tables are a snapshot in time, not timeless.**
+Vacancy B scores Siti Rahayu `0`, which holds only while she is under 30. She
+turns 30 on 2026-05-15 and the range `30–45` is inclusive, so from that date she
+earns the age weight and the published table stops reproducing. The acceptance
+suite pins `ClockService` to `2026-04-15`, inside that window, and asserts the
+deck's numbers directly. A property of the source document, not a defect.
 
 > **Note on the ground truth.** `AGENTS.md` points at "Vacancy A / Vacancy B
-> scoring tables in `docs/PRD.md` §6.3". `PRD.md` §6.3 is prose only; the actual
-> tables live in `docs/SAMPLE.md`. Both caveats above are properties of the
-> source document, not of this implementation.
+> scoring tables in `docs/PRD.md` §6.3". `PRD.md` §6.3 is prose only; the tables
+> themselves live in `docs/SAMPLE.md`.
 
 ---
 

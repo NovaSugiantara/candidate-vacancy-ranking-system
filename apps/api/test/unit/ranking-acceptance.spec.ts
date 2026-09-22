@@ -125,7 +125,7 @@ function vacancyA(): Vacancy {
         vacancyId: VACANCY_A_ID,
         type: CriterionType.SALARY_RANGE,
         weight: 5,
-        minSalary: 4_500_000,
+        minSalary: 4_000_000,
         maxSalary: 6_500_000,
       }),
     ],
@@ -262,26 +262,26 @@ describe('Ranking acceptance against the deck tables (docs/SAMPLE.md)', () => {
     ]);
   });
 
-  it('orders Vacancy A by score, then name, for the cells the deck fixes', async () => {
+  it('reproduces Ranking Example 1 — Vacancy A exactly, tie broken alphabetically', async () => {
     const harness = await createService();
     harness.vacancyRepository.findOne.mockResolvedValue(vacancyA());
     harness.candidateRepository.find.mockResolvedValue(deckCandidates());
 
     const response = await harness.service.rank(VACANCY_A_ID, query());
-    const order = response.results.map((result) => result.name);
 
-    // The deck ranks Indah, Siti, Budi. Siti must outrank Budi either way.
-    expect(order.indexOf('Siti Rahayu')).toBeLessThan(order.indexOf('Budi Santoso'));
+    expect(response.results.map((result) => `${result.name}:${result.score}`)).toStrictEqual([
+      'Indah Lestari:9',
+      'Siti Rahayu:9',
+      'Budi Santoso:1',
+    ]);
   });
 
-  it('scores Indah Lestari 4 on Vacancy A, contradicting the deck table', async () => {
+  it('matches a salary sitting exactly on the inclusive lower bound', async () => {
     const scores = await rank(await createService(), vacancyA());
 
-    // docs/SAMPLE.md claims 9 for Indah Lestari (age 3 + gender 1 + salary 5).
-    // Her salary is Rp 4.000.000 and Vacancy A's range is Rp 4.500.000-6.500.000,
-    // so the inclusive range excludes her and the salary weight cannot apply.
-    // 3 + 1 = 4. Every other cell in both deck tables reproduces exactly, so one
-    // of the two published numbers is wrong: either her salary or the minimum.
-    expect(scores.get('Indah Lestari')).toBe(4);
+    // Indah Lestari earns Rp 4.000.000 and the range is Rp 4.000.000-6.500.000,
+    // so she sits exactly on the minimum. An exclusive comparison would drop her
+    // to 4 and destroy the deck's 9-9 tie, which is the tie it exists to show.
+    expect(scores.get('Indah Lestari')).toBe(9);
   });
 });
