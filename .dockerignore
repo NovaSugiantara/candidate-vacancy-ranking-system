@@ -1,0 +1,17 @@
+node_modules
+**/node_modules
+dist
+**/dist
+coverage
+**/coverage
+.git
+.gitignore
+.env
+.env.local
+.env.*.local
+*.tsbuildinfo
+**/*.tsbuildinfo
+.codegraph
+AGENTS.md
+docs
+README.md

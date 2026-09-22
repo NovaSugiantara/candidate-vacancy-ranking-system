@@ -1,0 +1,31 @@
+# Dependencies
+node_modules/
+
+# Builds
+dist/
+build/
+apps/*/dist/
+apps/web/dist/
+
+# Env — never commit real credentials
+.env
+.env.local
+.env.*.local
+
+# Tooling caches
+coverage/
+*.tsbuildinfo
+.oxlintcache
+.eslintcache
+
+# Editor / OS
+.DS_Store
+.idea/
+.vscode/
+.omo/
+
+# Codegraph index (local symlink)
+.codegraph
+
+# Agent instruction file (local)
+AGENTS.md

@@ -1,0 +1,38 @@
+{
+  "name": "candidate-vacancy-ranking-system",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Candidate management, vacancy management and weighted candidate ranking — Jobseeker.Company Full Stack Engineer technical test",
+  "packageManager": "npm@11.16.0",
+  "engines": {
+    "node": ">=24.11.0",
+    "npm": ">=11.0.0"
+  },
+  "workspaces": [
+    "apps/api",
+    "apps/web"
+  ],
+  "scripts": {
+    "build": "npm run build -w @jobseeker/api && npm run build -w @jobseeker/web",
+    "lint": "oxlint apps",
+    "format": "prettier --write .",
+    "format:check": "prettier --check .",
+    "test": "npm run test -w @jobseeker/api",
+    "test:watch": "npm run test:watch -w @jobseeker/api",
+    "test:cov": "npm run test:cov -w @jobseeker/api",
+    "test:e2e": "npm run test:e2e -w @jobseeker/api",
+    "dev": "concurrently -n api,web -c cyan,magenta \"npm run dev:api\" \"npm run dev:web\"",
+    "dev:api": "npm run dev -w @jobseeker/api",
+    "dev:web": "npm run dev -w @jobseeker/web",
+    "migration:run": "npm run migration:run -w @jobseeker/api",
+    "migration:revert": "npm run migration:revert -w @jobseeker/api",
+    "migration:generate": "npm run migration:generate -w @jobseeker/api --",
+    "seed": "npm run seed -w @jobseeker/api"
+  },
+  "devDependencies": {
+    "concurrently": "10.0.5",
+    "oxlint": "1.85.0",
+    "prettier": "3.9.8",
+    "typescript": "6.0.3"
+  }
+}
