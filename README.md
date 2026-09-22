@@ -251,24 +251,55 @@ Response:
 }
 ```
 
-### Expected results from the seeded data
+### Seeded candidates — the deck's own example data
 
-Reference date `2026-09-22`.
+`docs/SAMPLE.md` carries the candidate, vacancy and ranking tables from the
+assessment deck. The seed uses those candidates verbatim:
 
-| Vacancy | Ranking |
-|---|---|
-| Junior Software Engineer | Alice Adams `9`, Carol Clark `9`, Bob Brown `4`, David Diaz `1` |
-| Senior Data Scientist | Bob Brown `12`, David Diaz `2`, Alice Adams `0`, Carol Clark `0` |
+| Name | Email | Birthdate | Gender | Current salary |
+|---|---|---|---|---|
+| Siti Rahayu | siti.r@example.com | 1996-05-15 | FEMALE | 5,500,000 |
+| Budi Santoso | budi.s@example.com | 1989-11-20 | MALE | 8,000,000 |
+| Indah Lestari | indah.l@example.com | 2002-03-01 | FEMALE | 4,000,000 |
 
-These exercise both required edge cases: Vacancy A has a genuine tie at 9 broken
-alphabetically (Alice before Carol), and Vacancy B retains two zero-score
-candidates, also tie-broken by name.
+The two vacancies, their criteria and their weights also match the deck exactly.
 
-> **Note on the ground truth.** `AGENTS.md` refers to "Vacancy A / Vacancy B
-> scoring tables in `docs/PRD.md` §6.3". Those tables do not exist in the
-> repository — §6.3 is prose only. The expected values above were derived from
-> the stated rules plus the seeded data, and independently re-derived in SQL
-> against the live database to confirm.
+### Ranking the seeded data — and two places the deck does not reproduce
+
+`docs/SAMPLE.md` publishes two expected rankings. **Eleven of the twelve cells
+reproduce exactly.** The two that do not are both explained below, and neither
+is a defect in the ranking engine.
+
+**Vacancy B — matches the deck as written, but only before 2026-05-15.**
+The deck scores Siti Rahayu `0` here. That holds while she is under 30; the age
+criterion is inclusive and she turns 30 on 2026-05-15, after which `30` falls
+inside `30–45` and she earns the age weight. The published table is
+date-dependent, not timeless. Running today:
+
+| Vacancy | Ranking today (2026-09-22) | Deck table |
+|---|---|---|
+| Junior Software Engineer | Siti Rahayu `9`, Indah Lestari `4`, Budi Santoso `1` | Indah `9`, Siti `9`, Budi `1` |
+| Senior Data Scientist | Budi Santoso `12`, Siti Rahayu `4`, Indah Lestari `0` | Budi `12`, Indah `0`, Siti `0` |
+
+`test/unit/ranking-acceptance.spec.ts` pins the clock to a date inside the
+window where the deck's tables hold, and asserts them: Vacancy B reproduces
+**exactly** (`Budi 12`, `Siti 0`, `Indah 0`), as do Siti `9` and Budi `1` on
+Vacancy A.
+
+**Vacancy A — the deck contradicts its own data on one cell.**
+The deck scores Indah Lestari `9` (age `3` + gender `1` + salary `5`). Her
+salary is **Rp 4.000.000** and Vacancy A's salary range is **Rp 4.500.000 –
+6.500.000**, so an inclusive range excludes her and the salary weight cannot
+apply. The engine returns `3 + 1 = 4`. Every other cell in both tables matches,
+and Siti (`5.5M` inside) and Budi (`8M` outside) both behave exactly as the deck
+says, which rules out a different range interpretation. One of the two published
+numbers must therefore be wrong — either Indah's salary or Vacancy A's minimum.
+This is pinned by a test so it cannot silently drift.
+
+> **Note on the ground truth.** `AGENTS.md` points at "Vacancy A / Vacancy B
+> scoring tables in `docs/PRD.md` §6.3". `PRD.md` §6.3 is prose only; the actual
+> tables live in `docs/SAMPLE.md`. Both caveats above are properties of the
+> source document, not of this implementation.
 
 ---
 

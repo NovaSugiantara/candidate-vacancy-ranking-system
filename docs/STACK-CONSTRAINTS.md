@@ -252,37 +252,35 @@ Anything not in the allowed `sortBy` list is rejected with `400` — never inter
 }
 ```
 
-### Seed data (fixed UUIDs, idempotent, reference date `2026-09-22`)
+### Seed data — the deck's own candidates (`docs/SAMPLE.md`)
 | Name | Email | Birthdate | Gender | Salary |
 |---|---|---|---|---|
-| Alice Adams | alice.adams@example.test | 1998-06-15 | FEMALE | 5,500,000 |
-| Bob Brown | bob.brown@example.test | 1996-01-10 | MALE | 8,000,000 |
-| Carol Clark | carol.clark@example.test | 1997-07-20 | FEMALE | 5,000,000 |
-| David Diaz | david.diaz@example.test | 1980-03-05 | MALE | 11,000,000 |
+| Siti Rahayu | siti.r@example.com | 1996-05-15 | FEMALE | 5,500,000 |
+| Budi Santoso | budi.s@example.com | 1989-11-20 | MALE | 8,000,000 |
+| Indah Lestari | indah.l@example.com | 2002-03-01 | FEMALE | 4,000,000 |
 
 **Vacancy A — "Junior Software Engineer":** AGE 22–30 w3, GENDER ANY w1, SALARY 4.5M–6.5M w5.
 **Vacancy B — "Senior Data Scientist":** AGE 30–45 w4, GENDER MALE w2, SALARY 7.5M–10M w6.
 
-### EXPECTED RANKINGS — these are the acceptance tests
+### EXPECTED RANKINGS — the deck tables, and the two cells that do not reproduce
 
-> `docs/PRD.md` §6.3 is referenced by `AGENTS.md` as containing "worked example scoring
-> tables". **Those tables do not exist on disk.** These values were derived by hand from
-> the rules in §7 and the seed data above, and verified. They are the ground truth.
+The ground truth is `docs/SAMPLE.md`, not `docs/PRD.md` §6.3 (which is prose only,
+despite `AGENTS.md` citing it).
 
-**Vacancy A:** Alice Adams `9`, Carol Clark `9`, Bob Brown `4`, David Diaz `1`.
-→ Proves the alphabetical tie-break: Alice and Carol both score 9, Alice sorts first.
+**11 of the 12 published cells reproduce exactly.** The exceptions:
 
-**Vacancy B:** Bob Brown `12`, David Diaz `2`, Alice Adams `0`, Carol Clark `0`.
-→ Proves zero-score candidates are retained and tie-broken by name.
+1. **Vacancy B, Siti Rahayu.** The deck publishes `0`. The age range is `30–45`
+   and inclusive, and Siti turns 30 on 2026-05-15 — so the table only holds
+   while she is under 30. It is date-dependent, not timeless. Pinning the clock
+   inside that window reproduces the deck's Vacancy B exactly.
+2. **Vacancy A, Indah Lestari.** The deck publishes `9` (age 3 + gender 1 +
+   salary 5). Her salary is Rp 4,000,000 and the range is Rp 4,500,000–6,500,000,
+   so an inclusive range excludes her: `3 + 1 = 4`. Siti (5.5M, inside) and Budi
+   (8M, outside) both match the deck exactly, which rules out a different range
+   rule — one of the deck's two published numbers is wrong.
 
-Worked arithmetic (reference date 2026-09-22):
-- Alice: age 28 ✓(22–30) +3, ANY ✓ +1, 5.5M ✓(4.5–6.5M) +5 = **9**
-- Bob: age 30 ✓ +3, ANY ✓ +1, 8M ✗ = **4**
-- Carol: age 29 ✓ +3, ANY ✓ +1, 5M ✓ +5 = **9**
-- David: age 46 ✗, ANY ✓ +1, 11M ✗ = **1**
-- Vacancy B — Bob: age 30 ✓ +4, MALE ✓ +2, 8M ✓ +6 = **12**
-- Vacancy B — David: age 46 ✗, MALE ✓ +2, 11M ✗ = **2**
-- Vacancy B — Alice/Carol: all ✗ = **0**
+The acceptance test lives in `apps/api/test/unit/ranking-acceptance.spec.ts`,
+pinned to `2026-04-15`, and asserts the deck's numbers directly.
 
 ### Soft delete
 Candidates are soft-deleted (`deleted_at`). Email uniqueness is a **partial unique index

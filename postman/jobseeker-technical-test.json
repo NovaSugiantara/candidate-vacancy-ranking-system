@@ -33,7 +33,7 @@
             ],
             "body": {
               "mode": "raw",
-              "raw": "{\n  \"name\": \"Alice Adams\",\n  \"email\": \"alice.adams@example.test\",\n  \"birthdate\": \"1998-06-15\",\n  \"gender\": \"FEMALE\",\n  \"currentSalary\": 5500000\n}",
+              "raw": "{\n  \"name\": \"Siti Rahayu\",\n  \"email\": \"siti.r@example.com\",\n  \"birthdate\": \"1996-05-15\",\n  \"gender\": \"FEMALE\",\n  \"currentSalary\": 5500000\n}",
               "options": {
                 "raw": {
                   "language": "json"
@@ -61,7 +61,7 @@
                 ],
                 "body": {
                   "mode": "raw",
-                  "raw": "{\n  \"name\": \"Alice Adams\",\n  \"email\": \"alice.adams@example.test\",\n  \"birthdate\": \"1998-06-15\",\n  \"gender\": \"FEMALE\",\n  \"currentSalary\": 5500000\n}",
+                  "raw": "{\n  \"name\": \"Siti Rahayu\",\n  \"email\": \"siti.r@example.com\",\n  \"birthdate\": \"1996-05-15\",\n  \"gender\": \"FEMALE\",\n  \"currentSalary\": 5500000\n}",
                   "options": {
                     "raw": {
                       "language": "json"
@@ -83,7 +83,7 @@
                   "value": "application/json"
                 }
               ],
-              "body": "{\n  \"id\": \"11111111-1111-4111-8111-111111111111\",\n  \"name\": \"Alice Adams\",\n  \"email\": \"alice.adams@example.test\",\n  \"birthdate\": \"1998-06-15\",\n  \"gender\": \"FEMALE\",\n  \"currentSalary\": 5500000,\n  \"createdAt\": \"2026-09-22T00:00:00.000Z\",\n  \"updatedAt\": \"2026-09-22T00:00:00.000Z\"\n}"
+              "body": "{\n  \"id\": \"10000000-0000-4000-8000-000000000001\",\n  \"name\": \"Siti Rahayu\",\n  \"email\": \"siti.r@example.com\",\n  \"birthdate\": \"1996-05-15\",\n  \"gender\": \"FEMALE\",\n  \"currentSalary\": 5500000,\n  \"createdAt\": \"2026-09-22T00:00:00.000Z\",\n  \"updatedAt\": \"2026-09-22T00:00:00.000Z\"\n}"
             },
             {
               "name": "400 Validation Error",
@@ -98,7 +98,7 @@
                 ],
                 "body": {
                   "mode": "raw",
-                  "raw": "{\n  \"name\": \"Alice Adams\",\n  \"email\": \"invalid-email\",\n  \"birthdate\": \"1998-06-15\",\n  \"gender\": \"FEMALE\",\n  \"currentSalary\": 5500000\n}",
+                  "raw": "{\n  \"name\": \"Siti Rahayu\",\n  \"email\": \"invalid-email\",\n  \"birthdate\": \"1996-05-15\",\n  \"gender\": \"FEMALE\",\n  \"currentSalary\": 5500000\n}",
                   "options": {
                     "raw": {
                       "language": "json"
@@ -135,7 +135,7 @@
                 ],
                 "body": {
                   "mode": "raw",
-                  "raw": "{\n  \"name\": \"Alice Adams\",\n  \"email\": \"alice.adams@example.test\",\n  \"birthdate\": \"1998-06-15\",\n  \"gender\": \"FEMALE\",\n  \"currentSalary\": 5500000\n}",
+                  "raw": "{\n  \"name\": \"Siti Rahayu\",\n  \"email\": \"siti.r@example.com\",\n  \"birthdate\": \"1996-05-15\",\n  \"gender\": \"FEMALE\",\n  \"currentSalary\": 5500000\n}",
                   "options": {
                     "raw": {
                       "language": "json"
@@ -253,7 +253,7 @@
                   "value": "application/json"
                 }
               ],
-              "body": "{\n  \"data\": [\n    {\n      \"id\": \"11111111-1111-4111-8111-111111111111\",\n      \"name\": \"Alice Adams\",\n      \"email\": \"alice.adams@example.test\",\n      \"birthdate\": \"1998-06-15\",\n      \"gender\": \"FEMALE\",\n      \"currentSalary\": 5500000,\n      \"createdAt\": \"2026-09-22T00:00:00.000Z\",\n      \"updatedAt\": \"2026-09-22T00:00:00.000Z\"\n    },\n    {\n      \"id\": \"22222222-2222-4222-8222-222222222222\",\n      \"name\": \"Bob Brown\",\n      \"email\": \"bob.brown@example.test\",\n      \"birthdate\": \"1996-01-10\",\n      \"gender\": \"MALE\",\n      \"currentSalary\": 8000000,\n      \"createdAt\": \"2026-09-22T00:00:00.000Z\",\n      \"updatedAt\": \"2026-09-22T00:00:00.000Z\"\n    },\n    {\n      \"id\": \"33333333-3333-4333-8333-333333333333\",\n      \"name\": \"Carol Clark\",\n      \"email\": \"carol.clark@example.test\",\n      \"birthdate\": \"1997-07-20\",\n      \"gender\": \"FEMALE\",\n      \"currentSalary\": 5000000,\n      \"createdAt\": \"2026-09-22T00:00:00.000Z\",\n      \"updatedAt\": \"2026-09-22T00:00:00.000Z\"\n    },\n    {\n      \"id\": \"44444444-4444-4444-8444-444444444444\",\n      \"name\": \"David Diaz\",\n      \"email\": \"david.diaz@example.test\",\n      \"birthdate\": \"1980-03-05\",\n      \"gender\": \"MALE\",\n      \"currentSalary\": 11000000,\n      \"createdAt\": \"2026-09-22T00:00:00.000Z\",\n      \"updatedAt\": \"2026-09-22T00:00:00.000Z\"\n    }\n  ],\n  \"pagination\": {\n    \"page\": 1,\n    \"limit\": 20,\n    \"total\": 4,\n    \"totalPages\": 1\n  }\n}"
+              "body": "{\n  \"data\": [\n    {\n      \"id\": \"10000000-0000-4000-8000-000000000001\",\n      \"name\": \"Siti Rahayu\",\n      \"email\": \"siti.r@example.com\",\n      \"birthdate\": \"1996-05-15\",\n      \"gender\": \"FEMALE\",\n      \"currentSalary\": 5500000,\n      \"createdAt\": \"2026-09-22T00:00:00.000Z\",\n      \"updatedAt\": \"2026-09-22T00:00:00.000Z\"\n    },\n    {\n      \"id\": \"10000000-0000-4000-8000-000000000002\",\n      \"name\": \"Budi Santoso\",\n      \"email\": \"budi.s@example.com\",\n      \"birthdate\": \"1989-11-20\",\n      \"gender\": \"MALE\",\n      \"currentSalary\": 8000000,\n      \"createdAt\": \"2026-09-22T00:00:00.000Z\",\n      \"updatedAt\": \"2026-09-22T00:00:00.000Z\"\n    },\n    {\n      \"id\": \"10000000-0000-4000-8000-000000000003\",\n      \"name\": \"Indah Lestari\",\n      \"email\": \"indah.l@example.com\",\n      \"birthdate\": \"2002-03-01\",\n      \"gender\": \"FEMALE\",\n      \"currentSalary\": 4000000,\n      \"createdAt\": \"2026-09-22T00:00:00.000Z\",\n      \"updatedAt\": \"2026-09-22T00:00:00.000Z\"\n    }\n  ],\n  \"pagination\": {\n    \"page\": 1,\n    \"limit\": 20,\n    \"total\": 3,\n    \"totalPages\": 1\n  }\n}"
             }
           ]
         },
@@ -303,7 +303,7 @@
                   "value": "application/json"
                 }
               ],
-              "body": "{\n  \"id\": \"11111111-1111-4111-8111-111111111111\",\n  \"name\": \"Alice Adams\",\n  \"email\": \"alice.adams@example.test\",\n  \"birthdate\": \"1998-06-15\",\n  \"gender\": \"FEMALE\",\n  \"currentSalary\": 5500000,\n  \"createdAt\": \"2026-09-22T00:00:00.000Z\",\n  \"updatedAt\": \"2026-09-22T00:00:00.000Z\"\n}"
+              "body": "{\n  \"id\": \"10000000-0000-4000-8000-000000000001\",\n  \"name\": \"Siti Rahayu\",\n  \"email\": \"siti.r@example.com\",\n  \"birthdate\": \"1996-05-15\",\n  \"gender\": \"FEMALE\",\n  \"currentSalary\": 5500000,\n  \"createdAt\": \"2026-09-22T00:00:00.000Z\",\n  \"updatedAt\": \"2026-09-22T00:00:00.000Z\"\n}"
             },
             {
               "name": "404 Not Found",
@@ -411,7 +411,7 @@
                   "value": "application/json"
                 }
               ],
-              "body": "{\n  \"id\": \"11111111-1111-4111-8111-111111111111\",\n  \"name\": \"Alice Adams\",\n  \"email\": \"alice.adams@example.test\",\n  \"birthdate\": \"1998-06-15\",\n  \"gender\": \"FEMALE\",\n  \"currentSalary\": 5500000,\n  \"createdAt\": \"2026-09-22T00:00:00.000Z\",\n  \"updatedAt\": \"2026-09-22T00:05:00.000Z\"\n}"
+              "body": "{\n  \"id\": \"10000000-0000-4000-8000-000000000001\",\n  \"name\": \"Siti Rahayu\",\n  \"email\": \"siti.r@example.com\",\n  \"birthdate\": \"1996-05-15\",\n  \"gender\": \"FEMALE\",\n  \"currentSalary\": 5500000,\n  \"createdAt\": \"2026-09-22T00:00:00.000Z\",\n  \"updatedAt\": \"2026-09-22T00:05:00.000Z\"\n}"
             }
           ]
         },
@@ -924,7 +924,7 @@
                   "value": "application/json"
                 }
               ],
-              "body": "{\n  \"vacancy\": {\n    \"id\": \"aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaaaaaa\",\n    \"name\": \"Junior Software Engineer\"\n  },\n  \"results\": [\n    {\n      \"candidateId\": \"11111111-1111-4111-8111-111111111111\",\n      \"name\": \"Alice Adams\",\n      \"email\": \"alice.adams@example.test\",\n      \"score\": 9,\n      \"matchedCriteria\": [\n        {\n          \"type\": \"AGE\",\n          \"weight\": 3,\n          \"matched\": true\n        },\n        {\n          \"type\": \"GENDER\",\n          \"weight\": 1,\n          \"matched\": true\n        },\n        {\n          \"type\": \"SALARY_RANGE\",\n          \"weight\": 5,\n          \"matched\": true\n        }\n      ]\n    },\n    {\n      \"candidateId\": \"33333333-3333-4333-8333-333333333333\",\n      \"name\": \"Carol Clark\",\n      \"email\": \"carol.clark@example.test\",\n      \"score\": 9,\n      \"matchedCriteria\": [\n        {\n          \"type\": \"AGE\",\n          \"weight\": 3,\n          \"matched\": true\n        },\n        {\n          \"type\": \"GENDER\",\n          \"weight\": 1,\n          \"matched\": true\n        },\n        {\n          \"type\": \"SALARY_RANGE\",\n          \"weight\": 5,\n          \"matched\": true\n        }\n      ]\n    },\n    {\n      \"candidateId\": \"22222222-2222-4222-8222-222222222222\",\n      \"name\": \"Bob Brown\",\n      \"email\": \"bob.brown@example.test\",\n      \"score\": 4,\n      \"matchedCriteria\": [\n        {\n          \"type\": \"AGE\",\n          \"weight\": 3,\n          \"matched\": true\n        },\n        {\n          \"type\": \"GENDER\",\n          \"weight\": 1,\n          \"matched\": true\n        },\n        {\n          \"type\": \"SALARY_RANGE\",\n          \"weight\": 5,\n          \"matched\": false\n        }\n      ]\n    },\n    {\n      \"candidateId\": \"44444444-4444-4444-8444-444444444444\",\n      \"name\": \"David Diaz\",\n      \"email\": \"david.diaz@example.test\",\n      \"score\": 1,\n      \"matchedCriteria\": [\n        {\n          \"type\": \"AGE\",\n          \"weight\": 3,\n          \"matched\": false\n        },\n        {\n          \"type\": \"GENDER\",\n          \"weight\": 1,\n          \"matched\": true\n        },\n        {\n          \"type\": \"SALARY_RANGE\",\n          \"weight\": 5,\n          \"matched\": false\n        }\n      ]\n    }\n  ],\n  \"pagination\": {\n    \"page\": 1,\n    \"limit\": 20,\n    \"total\": 4,\n    \"totalPages\": 1\n  }\n}"
+              "body": "{\n  \"vacancy\": {\n    \"id\": \"20000000-0000-4000-8000-000000000001\",\n    \"name\": \"Junior Software Engineer\"\n  },\n  \"results\": [\n    {\n      \"candidateId\": \"10000000-0000-4000-8000-000000000001\",\n      \"name\": \"Siti Rahayu\",\n      \"email\": \"siti.r@example.com\",\n      \"score\": 9,\n      \"matchedCriteria\": [\n        {\n          \"type\": \"AGE\",\n          \"weight\": 3,\n          \"matched\": true\n        },\n        {\n          \"type\": \"GENDER\",\n          \"weight\": 1,\n          \"matched\": true\n        },\n        {\n          \"type\": \"SALARY_RANGE\",\n          \"weight\": 5,\n          \"matched\": true\n        }\n      ]\n    },\n    {\n      \"candidateId\": \"10000000-0000-4000-8000-000000000003\",\n      \"name\": \"Indah Lestari\",\n      \"email\": \"indah.l@example.com\",\n      \"score\": 4,\n      \"matchedCriteria\": [\n        {\n          \"type\": \"AGE\",\n          \"weight\": 3,\n          \"matched\": true\n        },\n        {\n          \"type\": \"GENDER\",\n          \"weight\": 1,\n          \"matched\": true\n        },\n        {\n          \"type\": \"SALARY_RANGE\",\n          \"weight\": 5,\n          \"matched\": false\n        }\n      ]\n    },\n    {\n      \"candidateId\": \"10000000-0000-4000-8000-000000000002\",\n      \"name\": \"Budi Santoso\",\n      \"email\": \"budi.s@example.com\",\n      \"score\": 1,\n      \"matchedCriteria\": [\n        {\n          \"type\": \"AGE\",\n          \"weight\": 3,\n          \"matched\": false\n        },\n        {\n          \"type\": \"GENDER\",\n          \"weight\": 1,\n          \"matched\": true\n        },\n        {\n          \"type\": \"SALARY_RANGE\",\n          \"weight\": 5,\n          \"matched\": false\n        }\n      ]\n    }\n  ],\n  \"pagination\": {\n    \"page\": 1,\n    \"limit\": 20,\n    \"total\": 3,\n    \"totalPages\": 1\n  }\n}"
             }
           ]
         }
@@ -939,7 +939,7 @@
     },
     {
       "key": "candidateId",
-      "value": "11111111-1111-4111-8111-111111111111",
+      "value": "10000000-0000-4000-8000-000000000001",
       "type": "string",
       "description": "Set automatically by Create Candidate."
     },
