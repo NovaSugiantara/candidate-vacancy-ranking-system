@@ -85,7 +85,7 @@ export class RankingService {
       relations: { criteria: true },
     });
     if (vacancy === null) {
-      throw new NotFoundException();
+      throw new NotFoundException('Vacancy not found');
     }
 
     const candidates = await this.candidateRepository.find();

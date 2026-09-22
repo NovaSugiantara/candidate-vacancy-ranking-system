@@ -27,7 +27,7 @@ export class UpdateCandidateDto {
     typeof value === 'string' ? value.trim().toLowerCase() : value,
   )
   @IsOptional()
-  @IsEmail()
+  @IsEmail({}, { message: 'Email must be valid' })
   @MaxLength(254)
   email?: string;
 

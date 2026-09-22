@@ -166,7 +166,7 @@ export class VacanciesService {
       relations: { criteria: true },
     });
     if (vacancy === null) {
-      throw new NotFoundException();
+      throw new NotFoundException('Vacancy not found');
     }
     return vacancy;
   }

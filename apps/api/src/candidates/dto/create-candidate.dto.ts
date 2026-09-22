@@ -41,7 +41,7 @@ export class CreateCandidateDto {
   @Transform(({ value }) =>
     typeof value === 'string' ? value.trim().toLowerCase() : value,
   )
-  @IsEmail()
+  @IsEmail({}, { message: 'Email must be valid' })
   @MaxLength(254)
   email: string;
 

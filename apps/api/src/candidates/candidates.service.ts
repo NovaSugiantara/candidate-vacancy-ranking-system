@@ -137,7 +137,7 @@ export class CandidatesService {
   private async getActive(id: string): Promise<Candidate> {
     const candidate = await this.repository.findOneBy({ id });
     if (candidate === null) {
-      throw new NotFoundException();
+      throw new NotFoundException('Candidate not found');
     }
     return candidate;
   }
