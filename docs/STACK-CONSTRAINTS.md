@@ -277,9 +277,10 @@ Two properties of these tables are not visible by reading them:
 1. **Vacancy A's salary minimum is `4.000.000`, not `4.500.000`.** The deck's criteria
    row and its scoring table contradict each other: the row says `4.500.000`, the table
    awards Indah Lestari the salary weight while her salary is exactly `4.000.000`.
-   `4.000.000` is used because the tables are graded, because it puts her exactly on the
-   inclusive lower bound, and because it is the only value under which her `9-9` tie
-   with Siti Rahayu — the tie Example 1 exists to demonstrate — occurs at all.
+   `4.000.000` is used because `docs/SAMPLE.md` §4 designates its own ranked tables as
+   "the ground-truth acceptance cases" (and `docs/PRD.md` §7 agrees), because it puts her
+   exactly on the inclusive lower bound, and because it is the only value under which her
+   `9-9` tie with Siti Rahayu — the tie Example 1 exists to demonstrate — occurs at all.
    `docs/SAMPLE.md` is left unedited and still shows `4.500.000`; this is the record of
    the divergence.
 2. **The tables are a snapshot in time.** Vacancy B publishes Siti Rahayu as `0`, which

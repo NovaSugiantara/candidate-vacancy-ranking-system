@@ -285,9 +285,11 @@ cannot hold.
 
 This implementation uses `4.000.000`, for three reasons:
 
-- `docs/PRD.md` §7 makes the **published scoring tables** the acceptance criterion
-  ("reproduces the two worked examples ... exactly"). The tables are graded; the
-  criteria transcription is not.
+- **`docs/SAMPLE.md` §4 designates its own ground truth.** It states: "These
+  tables are the **ground-truth acceptance cases** ... verified against Ranking
+  Example 1 and Ranking Example 2". The ranked tables are the acceptance case,
+  not the criteria rows. `docs/PRD.md` §7 says the same thing independently
+  ("reproduces the two worked examples ... exactly").
 - It places Indah exactly on the **inclusive lower bound** — the boundary the
   brief explicitly calls out as inclusive, and worth testing precisely.
 - It is the only value under which her `9-9` tie with Siti Rahayu exists. At
