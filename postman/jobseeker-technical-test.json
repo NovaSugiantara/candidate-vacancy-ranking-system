@@ -167,7 +167,7 @@
             "method": "GET",
             "header": [],
             "url": {
-              "raw": "{{baseUrl}}/candidates?page=1&limit=20&search=Alice&sortBy=name&sortOrder=asc",
+              "raw": "{{baseUrl}}/candidates?page=1&limit=20&search=Siti&sortBy=name&sortOrder=asc",
               "host": ["{{baseUrl}}"],
               "path": ["candidates"],
               "query": [
@@ -185,7 +185,7 @@
                 },
                 {
                   "key": "search",
-                  "value": "Alice",
+                  "value": "Siti",
                   "description": "Case-insensitive name or email substring.",
                   "disabled": true
                 },
@@ -212,7 +212,7 @@
                 "method": "GET",
                 "header": [],
                 "url": {
-                  "raw": "{{baseUrl}}/candidates?page=1&limit=20&search=Alice&sortBy=name&sortOrder=asc",
+                  "raw": "{{baseUrl}}/candidates?page=1&limit=20&search=Siti&sortBy=name&sortOrder=asc",
                   "host": ["{{baseUrl}}"],
                   "path": ["candidates"],
                   "query": [
@@ -228,7 +228,7 @@
                     },
                     {
                       "key": "search",
-                      "value": "Alice",
+                      "value": "Siti",
                       "disabled": true
                     },
                     {
@@ -836,7 +836,7 @@
             "method": "GET",
             "header": [],
             "url": {
-              "raw": "{{baseUrl}}/vacancies/:id/ranking?page=1&limit=20&search=Alice&minScore=1",
+              "raw": "{{baseUrl}}/vacancies/:id/ranking?page=1&limit=20&search=Siti&minScore=1",
               "host": ["{{baseUrl}}"],
               "path": ["vacancies", ":id", "ranking"],
               "query": [
@@ -854,7 +854,7 @@
                 },
                 {
                   "key": "search",
-                  "value": "Alice",
+                  "value": "Siti",
                   "description": "Case-insensitive candidate name or email substring.",
                   "disabled": true
                 },
@@ -882,7 +882,7 @@
                 "method": "GET",
                 "header": [],
                 "url": {
-                  "raw": "{{baseUrl}}/vacancies/:id/ranking?page=1&limit=20&search=Alice&minScore=1",
+                  "raw": "{{baseUrl}}/vacancies/:id/ranking?page=1&limit=20&search=Siti&minScore=1",
                   "host": ["{{baseUrl}}"],
                   "path": ["vacancies", ":id", "ranking"],
                   "query": [
@@ -898,7 +898,7 @@
                     },
                     {
                       "key": "search",
-                      "value": "Alice",
+                      "value": "Siti",
                       "disabled": true
                     },
                     {
