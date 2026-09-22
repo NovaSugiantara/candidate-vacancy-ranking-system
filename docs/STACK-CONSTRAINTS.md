@@ -1,0 +1,290 @@
+# Stack Constraints — FROZEN
+
+Verified against the npm registry on 2026-09-22. **Do not change a version, do not
+`npm install <pkg>@latest`, do not add a dependency not listed here.** If you think a
+package is missing, say so instead of installing it.
+
+---
+
+## 1. Exact version matrix
+
+### Root (devDependencies)
+| Package | Version |
+|---|---|
+| typescript | `6.0.3` |
+| oxlint | `1.85.0` |
+| concurrently | `10.0.5` |
+
+### `apps/api`
+| Package | Version |
+|---|---|
+| @nestjs/common | `12.0.4` |
+| @nestjs/core | `12.0.4` |
+| @nestjs/platform-fastify | `12.0.4` |
+| @nestjs/typeorm | `12.0.1` |
+| typeorm | `1.1.1` |
+| pg | `8.23.0` |
+| reflect-metadata | `0.2.2` |
+| rxjs | `7.8.2` |
+| class-validator | `0.15.1` |
+| class-transformer | `0.5.1` |
+| redis | `6.2.1` |
+| dotenv | `18.0.2` |
+| *dev* @nestjs/cli | `12.0.3` |
+| *dev* @nestjs/schematics | `12.0.4` |
+| *dev* @nestjs/testing | `12.0.4` |
+| *dev* jest | `30.5.2` |
+| *dev* ts-jest | `29.4.12` |
+| *dev* ts-node | `10.9.2` |
+| *dev* @types/node | `24.13.6` |
+| *dev* @types/jest | `30.0.0` |
+| *dev* @types/pg | `8.23.1` |
+
+### `apps/web`
+| Package | Version |
+|---|---|
+| react | `19.3.0` |
+| react-dom | `19.3.0` |
+| react-router | `8.4.0` |
+| @tanstack/react-query | `5.103.2` |
+| react-hook-form | `7.88.0` |
+| zod | `4.6.5` |
+| @hookform/resolvers | `5.9.1` |
+| axios | `1.20.0` |
+| *dev* vite | `8.3.0` |
+| *dev* @vitejs/plugin-react | `6.1.1` |
+| *dev* tailwindcss | `4.3.3` |
+| *dev* @tailwindcss/vite | `4.3.3` |
+| *dev* @types/react | `19.3.0` |
+| *dev* @types/react-dom | `19.3.0` |
+| *dev* typescript | `6.0.3` |
+
+### BANNED — do not install, ever
+- `typescript@7.x` — **`ts-jest` peer is `typescript: ">=4.3 <7"`** and `@nestjs/cli@12`
+  depends on `typescript: ~6.0.2`. TS 7 breaks `nest build` **and** the test runner.
+- `react-router-dom` — **removed in React Router 8.** Use `react-router`.
+- `cache-manager`, `@nestjs/cache-manager`, `@keyv/redis`, `cache-manager-redis-yet`,
+  `cache-manager-ioredis-yet`, `ioredis` — we use the `redis` client directly (see §4).
+- `@nestjs/config` — use `dotenv` directly.
+- `recharts` — brief says "if needed"; it is not needed. Ranking is a table.
+- `@tanstack/react-query-devtools`, `eslint`, `prettier`, `@nestjs/mapped-types`,
+  `@nestjs/swagger`, `@nestjs/terminus`, `helmet`, `passport`, any auth package.
+- `nx`, `turbo`, `lerna`, `pnpm` — plain npm workspaces only.
+
+---
+
+## 2. Runtime
+Node `24.18.0`, npm `11.16.0`. Engines: `node >=24.11.0` (TypeORM 1.x floor).
+
+**Module system:** `apps/api` is **CommonJS** (no `"type": "module"`). `apps/web` is
+**ESM** (`"type": "module"`). Nest 12 packages ship ESM; Node 24 resolves them from CJS
+via `require(esm)`, which is why the API test script must run Jest through
+`node --experimental-vm-modules`.
+
+---
+
+## 3. Backend gotchas — these WILL bite if ignored
+
+### TypeORM 1.1.1 (breaking vs the 0.3.x API most examples show)
+- `relations` **object syntax only**. `relations: ['criteria']` **throws**. Use
+  `relations: { criteria: true }`.
+- `select` **object syntax only**. `select: ['id']` throws. Use `select: { id: true }`.
+- `invalidWhereValuesBehavior` defaults to **`throw`**. `findOneBy({ email: undefined })`
+  now throws instead of silently matching everything. Guard for undefined explicitly.
+- `.env` **auto-load is removed**, and `TYPEORM_*` env config is gone. Load dotenv yourself.
+- `Repository.exist()` → `exists()`.
+- `nullable: false` on a `@ManyToOne` now produces an **INNER JOIN**.
+- **`@CreateDateColumn()` with no `type` produces `timestamp`, not `timestamptz`.**
+  Always pass `{ type: 'timestamptz' }` explicitly.
+- `@PrimaryGeneratedColumn('uuid')` generates the UUID in the app, not the DB.
+- `cascade: true` cascades **remove** too. Use `cascade: ['insert', 'update']`.
+- CLI bins: `typeorm-ts-node-commonjs` (CJS), `typeorm-ts-node-esm` (ESM). Migration
+  commands need `-d <data-source path>`.
+
+### NestJS 12 + Fastify 5.12.5
+- `app.listen(port, hostname)` — **port first, then host**. Not an options object.
+  In Docker you **must** pass `'0.0.0.0'` or the container is unreachable.
+- Fastify's default CORS allows **only safelisted methods** (GET/HEAD/POST). PUT, PATCH
+  and DELETE must be listed explicitly in `enableCors({ methods: [...] })`.
+- Fastify 5 uses path-to-regexp 8: `(.*)` is invalid. Use `/*splat` or `/{*splat}`.
+- `NestFactory.create<NestFastifyApplication>(AppModule, new FastifyAdapter({...}))`.
+- `PipeTransform` / `ArgumentMetadata` are now **generic** in Nest 12.
+
+### ValidationPipe (class-validator 0.15.1)
+- `transform: true` is **mandatory** or `@Type()` never runs and `@ValidateNested`
+  silently passes on plain objects. This is the single most common mistake.
+- `stopAtFirstError` defaults to **`false`**. (Nest's own JSDoc claiming "enabled by
+  default" is wrong — set it explicitly.)
+- `forbidUnknownValues` defaults to **`true`**.
+- `ValidationPipeOptions` in Nest 12 gained `errorFormat: 'list' | 'grouped'`, plus
+  `validatorPackage` / `transformerPackage` for ESM interop.
+- The error flattener **must recurse into `ValidationError.children`**, and must handle
+  nodes where `constraints` is `undefined` (parent nodes of nested errors). A flat
+  `errors.map(e => e.constraints)` flattener drops nested errors and crashes.
+
+---
+
+## 4. Redis — direct client, no wrapper
+
+Use `redis@6.2.1` (`createClient`) inside one small `RankingCacheService`. Rationale:
+we need raw `SCAN`/`UNLINK` for per-vacancy pattern invalidation anyway, so a wrapper
+library would only add an ESM-only dependency and a failure-mode footgun without saving
+code.
+
+Non-negotiable behaviours:
+- `client.on('error', ...)` **must** be attached, or an unhandled error event crashes the
+  process.
+- Redis failures are **non-fatal**: every cache read/write/delete is wrapped, logs exactly
+  one `WARN` per request (with the request id), and falls back to PostgreSQL. Ranking
+  correctness must never depend on Redis.
+- Connect **lazily / non-blocking**: bootstrap must not await Redis, and a down Redis must
+  not hang requests. Disable the offline queue so commands fail fast instead of queueing.
+- TTL: ranking `60s`, vacancy criteria `300s`.
+
+---
+
+## 5. Frontend gotchas
+
+- **React Router 8:** `react-router-dom` does not exist. `RouterProvider` and
+  `HydratedRouter` come from `react-router/dom`; `createBrowserRouter`, `Outlet`, `Link`,
+  `useNavigate` come from `react-router`. Router is created **once, outside React**.
+- **Tailwind v4 is CSS-first.** `@import "tailwindcss";` + `@theme { }` in CSS, and the
+  `@tailwindcss/vite` plugin. There is **no** `tailwind.config.js`, **no**
+  `postcss.config.js`, **no** `content: []` array, **no** `@tailwind base/components/utilities`.
+- **No `src/vite-env.d.ts`** — the template sets `"types": ["vite/client"]` in
+  `tsconfig.app.json`. To type custom env vars, augment `ImportMetaEnv` in a d.ts with
+  **no top-level import**.
+- **Zod 4:** use `error.issues` (`error.errors` is gone). Top-level `z.email()` and
+  `z.iso.date()`. Use `{ error: '...' }` instead of `message` / `errorMap`.
+- **`@hookform/resolvers` 5:** `useForm` generic is `<Input, Context, Output>`. If a
+  schema uses `.default()` / `z.coerce`, input and output types diverge — either pass all
+  three generics or omit the generic entirely.
+- **TanStack Query v5:** object form only; `onSuccess`/`onError` on `useQuery` are
+  **removed** (mutations keep them). `invalidateQueries({ queryKey: [...] })` matches by
+  **prefix**.
+- **Vite 8 is Rolldown-based:** `build.rollupOptions` → `build.rolldownOptions`;
+  `output.manualChunks` **object form is removed and throws**.
+- **React 19:** `ref` is a plain prop — no `forwardRef`. A ref callback returning a
+  non-function is an error. `propTypes` / `defaultProps` on function components are gone.
+- Axios: do **not** convert an abort into an app error — TanStack Query treats
+  `CanceledError` as cancellation.
+
+---
+
+## 6. Architecture rules (hard, graded)
+
+- Criteria evaluation goes through the **strategy registry**.
+  `RankingService` must contain **no** `if (criterion.type === 'AGE')`-style branching.
+  Adding a criterion type = new strategy class + one registry line. Nothing else.
+- `RankingService` must not touch the DB or cache inside the candidate loop. One query
+  loads the active candidates; evaluation is pure and in-memory.
+- No `as any`, no `@ts-ignore`, no `@ts-expect-error`. Strict TS.
+- No per-candidate / per-criterion logging. Batch-level summaries only.
+- NestJS HTTP exceptions only (`NotFoundException`, `ConflictException`, ...), never
+  `throw new Error()`.
+- No authentication. No payments. No features outside the brief.
+- No empty `TODO` in a shipped path.
+
+---
+
+## 7. Domain contract — freeze this
+
+### Ranking
+Score = sum of `weight` for each criterion the candidate matches.
+- Age: `minAge <= age <= maxAge`, **inclusive**; age = completed years as of "today".
+- Salary: `minSalary <= currentSalary <= maxSalary`, **inclusive**.
+- Gender: `ANY` always matches; otherwise exact equality.
+- Sort: score **DESC**, then `name` **ASC** (alphabetical, case-insensitive), then `id` ASC
+  for full determinism.
+- Score `0` candidates **remain in the results**.
+- Order of operations: score all → sort → apply `search` → apply `minScore` → paginate.
+
+### Ranking response
+```json
+{
+  "vacancy": { "id": "uuid", "name": "Junior Software Engineer" },
+  "results": [
+    {
+      "candidateId": "uuid",
+      "name": "Alice Adams",
+      "email": "alice.adams@example.test",
+      "score": 9,
+      "matchedCriteria": [
+        { "type": "AGE", "weight": 3, "matched": true },
+        { "type": "GENDER", "weight": 1, "matched": true },
+        { "type": "SALARY_RANGE", "weight": 5, "matched": true }
+      ]
+    }
+  ],
+  "pagination": { "page": 1, "limit": 20, "total": 4, "totalPages": 1 }
+}
+```
+
+### List envelope — frozen
+`GET /candidates` and `GET /vacancies` both return:
+```json
+{
+  "data": [ /* resources */ ],
+  "pagination": { "page": 1, "limit": 20, "total": 42, "totalPages": 3 }
+}
+```
+Query params on both: `page` (int ≥ 1, default 1), `limit` (int 1–100, default 20),
+`search` (case-insensitive substring — candidates: `name` or `email`; vacancies: `name`),
+`sortBy`, `sortOrder` (`asc` | `desc`, default `asc`).
+- candidate `sortBy`: `name` | `email` | `currentSalary` | `birthdate` | `createdAt`
+- vacancy `sortBy`: `name` | `createdAt`
+
+Anything not in the allowed `sortBy` list is rejected with `400` — never interpolated into SQL.
+
+### Single-resource responses — frozen
+- `GET /candidates/:id`, `GET /vacancies/:id` → the resource object directly (not wrapped).
+- `POST` → `201` + the created resource.
+- `PATCH` → `200` + the updated resource.
+- `DELETE` → `204`, empty body.
+
+### Error envelope — every error, no exceptions```json
+{
+  "statusCode": 400,
+  "message": "Validation failed",
+  "errors": [{ "field": "email", "message": "Email must be valid" }],
+  "timestamp": "2026-09-22T00:00:00.000Z",
+  "path": "/candidates"
+}
+```
+
+### Seed data (fixed UUIDs, idempotent, reference date `2026-09-22`)
+| Name | Email | Birthdate | Gender | Salary |
+|---|---|---|---|---|
+| Alice Adams | alice.adams@example.test | 1998-06-15 | FEMALE | 5,500,000 |
+| Bob Brown | bob.brown@example.test | 1996-01-10 | MALE | 8,000,000 |
+| Carol Clark | carol.clark@example.test | 1997-07-20 | FEMALE | 5,000,000 |
+| David Diaz | david.diaz@example.test | 1980-03-05 | MALE | 11,000,000 |
+
+**Vacancy A — "Junior Software Engineer":** AGE 22–30 w3, GENDER ANY w1, SALARY 4.5M–6.5M w5.
+**Vacancy B — "Senior Data Scientist":** AGE 30–45 w4, GENDER MALE w2, SALARY 7.5M–10M w6.
+
+### EXPECTED RANKINGS — these are the acceptance tests
+
+> `docs/PRD.md` §6.3 is referenced by `AGENTS.md` as containing "worked example scoring
+> tables". **Those tables do not exist on disk.** These values were derived by hand from
+> the rules in §7 and the seed data above, and verified. They are the ground truth.
+
+**Vacancy A:** Alice Adams `9`, Carol Clark `9`, Bob Brown `4`, David Diaz `1`.
+→ Proves the alphabetical tie-break: Alice and Carol both score 9, Alice sorts first.
+
+**Vacancy B:** Bob Brown `12`, David Diaz `2`, Alice Adams `0`, Carol Clark `0`.
+→ Proves zero-score candidates are retained and tie-broken by name.
+
+Worked arithmetic (reference date 2026-09-22):
+- Alice: age 28 ✓(22–30) +3, ANY ✓ +1, 5.5M ✓(4.5–6.5M) +5 = **9**
+- Bob: age 30 ✓ +3, ANY ✓ +1, 8M ✗ = **4**
+- Carol: age 29 ✓ +3, ANY ✓ +1, 5M ✓ +5 = **9**
+- David: age 46 ✗, ANY ✓ +1, 11M ✗ = **1**
+- Vacancy B — Bob: age 30 ✓ +4, MALE ✓ +2, 8M ✓ +6 = **12**
+- Vacancy B — David: age 46 ✗, MALE ✓ +2, 11M ✗ = **2**
+- Vacancy B — Alice/Carol: all ✗ = **0**
+
+### Soft delete
+Candidates are soft-deleted (`deleted_at`). Email uniqueness is a **partial unique index
+on `lower(email)` where `deleted_at IS NULL`**, so a soft-deleted candidate frees its
+email. Ranking and listing consider active candidates only.
