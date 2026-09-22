@@ -1,9 +1,4 @@
-import {
-  BadRequestException,
-  Injectable,
-  Logger,
-  NotFoundException,
-} from '@nestjs/common';
+import { BadRequestException, Injectable, Logger, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { DataSource, ILike, Repository } from 'typeorm';
 import type { EntityManager, FindOptionsOrder } from 'typeorm';
@@ -81,9 +76,7 @@ export class VacanciesService {
       return this.loadById(manager, saved.id);
     });
     await this.rankingCache.invalidateVacancy(vacancy.id);
-    this.logger.log(
-      `vacancy.created id=${vacancy.id} criteria=${vacancy.criteria.length}`,
-    );
+    this.logger.log(`vacancy.created id=${vacancy.id} criteria=${vacancy.criteria.length}`);
     return this.toResponse(vacancy);
   }
 
@@ -91,9 +84,7 @@ export class VacanciesService {
     const { page, limit, search, sortBy, sortOrder } = query;
     const direction = sortOrder === 'asc' ? 'ASC' : 'DESC';
     const order: FindOptionsOrder<Vacancy> =
-      SORT_FIELDS[sortBy] === 'name'
-        ? { name: direction }
-        : { createdAt: direction };
+      SORT_FIELDS[sortBy] === 'name' ? { name: direction } : { createdAt: direction };
 
     const [rows, total] = await this.repository.findAndCount({
       where: search ? { name: ILike(`%${search}%`) } : {},
@@ -124,9 +115,7 @@ export class VacanciesService {
       throw new BadRequestException({
         statusCode: 400,
         message: 'Validation failed',
-        errors: [
-          { field: 'body', message: 'At least one field must be provided' },
-        ],
+        errors: [{ field: 'body', message: 'At least one field must be provided' }],
       });
     }
 
@@ -147,9 +136,7 @@ export class VacanciesService {
     });
 
     await this.rankingCache.invalidateVacancy(id);
-    this.logger.log(
-      `vacancy.updated id=${id} criteria=${vacancy.criteria.length}`,
-    );
+    this.logger.log(`vacancy.updated id=${id} criteria=${vacancy.criteria.length}`);
     return this.toResponse(vacancy);
   }
 
@@ -183,9 +170,7 @@ export class VacanciesService {
     vacancyId: string,
     manager: EntityManager,
   ): VacancyCriterion[] {
-    return dtos.map((criterion) =>
-      this.toCriterionEntity(criterion, vacancyId, manager),
-    );
+    return dtos.map((criterion) => this.toCriterionEntity(criterion, vacancyId, manager));
   }
 
   private toCriterionEntity(

@@ -1,13 +1,6 @@
-import {
-  Inject,
-  Injectable,
-  type OnModuleDestroy,
-} from '@nestjs/common';
+import { Inject, Injectable, type OnModuleDestroy } from '@nestjs/common';
 import { createClient } from 'redis';
-import {
-  redisConfig,
-  type RedisConfig,
-} from '../../config/redis.config';
+import { redisConfig, type RedisConfig } from '../../config/redis.config';
 import { RequestContextService } from '../correlation/request-context.service';
 import { AppLoggerService } from '../logging/app-logger.service';
 
@@ -115,10 +108,7 @@ export class RankingCacheService {
     await this.fallback(async () => {
       await this.redis.client
         .multi()
-        .del([
-          vacancyKey(vacancyId, RESULTS_SUFFIX),
-          vacancyKey(vacancyId, CRITERIA_SUFFIX),
-        ])
+        .del([vacancyKey(vacancyId, RESULTS_SUFFIX), vacancyKey(vacancyId, CRITERIA_SUFFIX)])
         .sRem(VACANCY_INDEX_KEY, vacancyId)
         .execAsPipeline();
     }, undefined);

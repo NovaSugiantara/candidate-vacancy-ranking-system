@@ -1,9 +1,4 @@
-import {
-  BadRequestException,
-  Injectable,
-  Logger,
-  NotFoundException,
-} from '@nestjs/common';
+import { BadRequestException, Injectable, Logger, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { RankingCacheService } from '../common/cache/ranking-cache.service';
@@ -113,9 +108,7 @@ export class CandidatesService {
       throw new BadRequestException({
         statusCode: 400,
         message: 'Validation failed',
-        errors: [
-          { field: 'body', message: 'At least one field must be provided' },
-        ],
+        errors: [{ field: 'body', message: 'At least one field must be provided' }],
       });
     }
 

@@ -67,9 +67,29 @@ function vacancyA(): Vacancy {
     id: 'vacancy-a',
     name: 'Junior Software Engineer',
     criteria: [
-      makeCriterion({ id: 'crit-a1', vacancyId: 'vacancy-a', type: CriterionType.AGE, weight: 3, minAge: 22, maxAge: 30 }),
-      makeCriterion({ id: 'crit-a2', vacancyId: 'vacancy-a', type: CriterionType.GENDER, weight: 1, gender: CriterionGender.ANY }),
-      makeCriterion({ id: 'crit-a3', vacancyId: 'vacancy-a', type: CriterionType.SALARY_RANGE, weight: 5, minSalary: 4_500_000, maxSalary: 6_500_000 }),
+      makeCriterion({
+        id: 'crit-a1',
+        vacancyId: 'vacancy-a',
+        type: CriterionType.AGE,
+        weight: 3,
+        minAge: 22,
+        maxAge: 30,
+      }),
+      makeCriterion({
+        id: 'crit-a2',
+        vacancyId: 'vacancy-a',
+        type: CriterionType.GENDER,
+        weight: 1,
+        gender: CriterionGender.ANY,
+      }),
+      makeCriterion({
+        id: 'crit-a3',
+        vacancyId: 'vacancy-a',
+        type: CriterionType.SALARY_RANGE,
+        weight: 5,
+        minSalary: 4_500_000,
+        maxSalary: 6_500_000,
+      }),
     ],
   });
 }
@@ -79,19 +99,67 @@ function vacancyB(): Vacancy {
     id: 'vacancy-b',
     name: 'Senior Data Scientist',
     criteria: [
-      makeCriterion({ id: 'crit-b1', vacancyId: 'vacancy-b', type: CriterionType.AGE, weight: 4, minAge: 30, maxAge: 45 }),
-      makeCriterion({ id: 'crit-b2', vacancyId: 'vacancy-b', type: CriterionType.GENDER, weight: 2, gender: CriterionGender.MALE }),
-      makeCriterion({ id: 'crit-b3', vacancyId: 'vacancy-b', type: CriterionType.SALARY_RANGE, weight: 6, minSalary: 7_500_000, maxSalary: 10_000_000 }),
+      makeCriterion({
+        id: 'crit-b1',
+        vacancyId: 'vacancy-b',
+        type: CriterionType.AGE,
+        weight: 4,
+        minAge: 30,
+        maxAge: 45,
+      }),
+      makeCriterion({
+        id: 'crit-b2',
+        vacancyId: 'vacancy-b',
+        type: CriterionType.GENDER,
+        weight: 2,
+        gender: CriterionGender.MALE,
+      }),
+      makeCriterion({
+        id: 'crit-b3',
+        vacancyId: 'vacancy-b',
+        type: CriterionType.SALARY_RANGE,
+        weight: 6,
+        minSalary: 7_500_000,
+        maxSalary: 10_000_000,
+      }),
     ],
   });
 }
 
 function seedCandidates(): Candidate[] {
   return [
-    makeCandidate({ id: 'cand-alice', name: 'Alice Adams', email: 'alice.adams@example.test', birthdate: '1998-06-15', gender: CandidateGender.FEMALE, currentSalary: 5_500_000 }),
-    makeCandidate({ id: 'cand-bob', name: 'Bob Brown', email: 'bob.brown@example.test', birthdate: '1996-01-10', gender: CandidateGender.MALE, currentSalary: 8_000_000 }),
-    makeCandidate({ id: 'cand-carol', name: 'Carol Clark', email: 'carol.clark@example.test', birthdate: '1997-07-20', gender: CandidateGender.FEMALE, currentSalary: 5_000_000 }),
-    makeCandidate({ id: 'cand-david', name: 'David Diaz', email: 'david.diaz@example.test', birthdate: '1980-03-05', gender: CandidateGender.MALE, currentSalary: 11_000_000 }),
+    makeCandidate({
+      id: 'cand-alice',
+      name: 'Alice Adams',
+      email: 'alice.adams@example.test',
+      birthdate: '1998-06-15',
+      gender: CandidateGender.FEMALE,
+      currentSalary: 5_500_000,
+    }),
+    makeCandidate({
+      id: 'cand-bob',
+      name: 'Bob Brown',
+      email: 'bob.brown@example.test',
+      birthdate: '1996-01-10',
+      gender: CandidateGender.MALE,
+      currentSalary: 8_000_000,
+    }),
+    makeCandidate({
+      id: 'cand-carol',
+      name: 'Carol Clark',
+      email: 'carol.clark@example.test',
+      birthdate: '1997-07-20',
+      gender: CandidateGender.FEMALE,
+      currentSalary: 5_000_000,
+    }),
+    makeCandidate({
+      id: 'cand-david',
+      name: 'David Diaz',
+      email: 'david.diaz@example.test',
+      birthdate: '1980-03-05',
+      gender: CandidateGender.MALE,
+      currentSalary: 11_000_000,
+    }),
   ];
 }
 
@@ -133,7 +201,10 @@ async function createService(): Promise<TestContext> {
       { provide: getRepositoryToken(Vacancy), useValue: vacancyRepository },
       { provide: RankingCacheService, useValue: rankingCache },
       { provide: ClockService, useValue: { now: () => new Date(2026, 8, 22, 12, 0, 0) } },
-      { provide: AppLoggerService, useValue: { info: jest.fn(), warn: jest.fn(), error: jest.fn() } },
+      {
+        provide: AppLoggerService,
+        useValue: { info: jest.fn(), warn: jest.fn(), error: jest.fn() },
+      },
     ],
   }).compile();
 
@@ -259,8 +330,6 @@ describe('RankingService', () => {
     const { service, vacancyRepository } = await createService();
     vacancyRepository.findOne.mockResolvedValue(null);
 
-    await expect(service.rank('missing', defaultQuery())).rejects.toBeInstanceOf(
-      NotFoundException,
-    );
+    await expect(service.rank('missing', defaultQuery())).rejects.toBeInstanceOf(NotFoundException);
   });
 });

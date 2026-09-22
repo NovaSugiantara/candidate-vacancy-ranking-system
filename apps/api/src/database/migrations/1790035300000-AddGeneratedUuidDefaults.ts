@@ -10,9 +10,7 @@ const TABLES = ['candidates', 'vacancies', 'vacancy_criteria'] as const;
  *
  * Postgres 13+ ships gen_random_uuid() in core, so no pgcrypto extension is needed.
  */
-export class AddGeneratedUuidDefaults1790035300000
-  implements MigrationInterface
-{
+export class AddGeneratedUuidDefaults1790035300000 implements MigrationInterface {
   async up(queryRunner: QueryRunner): Promise<void> {
     for (const table of TABLES) {
       await queryRunner.query(
@@ -23,9 +21,7 @@ export class AddGeneratedUuidDefaults1790035300000
 
   async down(queryRunner: QueryRunner): Promise<void> {
     for (const table of TABLES) {
-      await queryRunner.query(
-        `ALTER TABLE "${table}" ALTER COLUMN "id" DROP DEFAULT`,
-      );
+      await queryRunner.query(`ALTER TABLE "${table}" ALTER COLUMN "id" DROP DEFAULT`);
     }
   }
 }

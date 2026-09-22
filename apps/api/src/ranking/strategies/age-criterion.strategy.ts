@@ -14,9 +14,7 @@ function yearMonthDay(value: string | Date): YearMonthDay {
       day: value.getDate(),
     };
   }
-  const [year, month, day] = value
-    .split('-')
-    .map((part) => Number.parseInt(part, 10));
+  const [year, month, day] = value.split('-').map((part) => Number.parseInt(part, 10));
   return { year, month, day };
 }
 

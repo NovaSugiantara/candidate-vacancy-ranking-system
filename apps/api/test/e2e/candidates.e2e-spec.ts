@@ -1,8 +1,5 @@
 import { Test } from '@nestjs/testing';
-import {
-  FastifyAdapter,
-  type NestFastifyApplication,
-} from '@nestjs/platform-fastify';
+import { FastifyAdapter, type NestFastifyApplication } from '@nestjs/platform-fastify';
 import { randomUUID } from 'node:crypto';
 import type { FastifyInstance } from 'fastify';
 import { DataSource } from 'typeorm';
@@ -52,9 +49,7 @@ describe('Candidates (e2e)', () => {
       imports: [AppModule],
     }).compile();
 
-    app = moduleRef.createNestApplication<NestFastifyApplication>(
-      new FastifyAdapter(),
-    );
+    app = moduleRef.createNestApplication<NestFastifyApplication>(new FastifyAdapter());
     app.useGlobalPipes(createValidationPipe());
     await app.init();
     fastify = app.getHttpAdapter().getInstance();

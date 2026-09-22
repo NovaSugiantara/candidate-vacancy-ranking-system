@@ -7,9 +7,7 @@ function flattenValidationErrors(
   parentPath = '',
 ): ApiFieldError[] {
   return errors.flatMap((error) => {
-    const field = parentPath
-      ? `${parentPath}.${error.property}`
-      : error.property;
+    const field = parentPath ? `${parentPath}.${error.property}` : error.property;
     const ownErrors = Object.values(error.constraints ?? {}).map((message) => ({
       field,
       message,

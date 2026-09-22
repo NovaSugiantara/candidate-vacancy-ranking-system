@@ -4,10 +4,7 @@ import 'dotenv/config';
 import { randomUUID } from 'node:crypto';
 import type { IncomingMessage } from 'node:http';
 import { NestFactory } from '@nestjs/core';
-import {
-  FastifyAdapter,
-  type NestFastifyApplication,
-} from '@nestjs/platform-fastify';
+import { FastifyAdapter, type NestFastifyApplication } from '@nestjs/platform-fastify';
 import { AppModule } from './app.module';
 import { AppLoggerService } from './common/logging/app-logger.service';
 import { createValidationPipe } from './common/pipes/validation-pipe.factory';
@@ -26,9 +23,7 @@ async function bootstrap(): Promise<void> {
       trustProxy: true,
       genReqId: (request: IncomingMessage) => {
         const incomingRequestId = request.headers['x-request-id'];
-        return isSaneRequestId(incomingRequestId)
-          ? incomingRequestId
-          : randomUUID();
+        return isSaneRequestId(incomingRequestId) ? incomingRequestId : randomUUID();
       },
     }),
   );

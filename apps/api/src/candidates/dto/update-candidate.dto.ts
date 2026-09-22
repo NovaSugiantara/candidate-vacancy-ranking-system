@@ -23,9 +23,7 @@ export class UpdateCandidateDto {
   @MaxLength(120)
   name?: string;
 
-  @Transform(({ value }) =>
-    typeof value === 'string' ? value.trim().toLowerCase() : value,
-  )
+  @Transform(({ value }) => (typeof value === 'string' ? value.trim().toLowerCase() : value))
   @IsOptional()
   @IsEmail({}, { message: 'Email must be valid' })
   @MaxLength(254)

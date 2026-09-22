@@ -14,9 +14,7 @@ import { CriterionGender } from '../../shared/enums/criterion-gender.enum';
 import { CriterionType } from '../../shared/enums/criterion-type.enum';
 
 @ValidatorConstraint({ name: 'minAgeNotGreaterThanMaxAge', async: false })
-export class MinAgeNotGreaterThanMaxAgeConstraint
-  implements ValidatorConstraintInterface
-{
+export class MinAgeNotGreaterThanMaxAgeConstraint implements ValidatorConstraintInterface {
   validate(_value: unknown, args: ValidationArguments): boolean {
     const { minAge, maxAge } = args.object as {
       minAge?: number;
@@ -34,9 +32,7 @@ export class MinAgeNotGreaterThanMaxAgeConstraint
 }
 
 @ValidatorConstraint({ name: 'minSalaryNotGreaterThanMaxSalary', async: false })
-export class MinSalaryNotGreaterThanMaxSalaryConstraint
-  implements ValidatorConstraintInterface
-{
+export class MinSalaryNotGreaterThanMaxSalaryConstraint implements ValidatorConstraintInterface {
   validate(_value: unknown, args: ValidationArguments): boolean {
     const { minSalary, maxSalary } = args.object as {
       minSalary?: number;

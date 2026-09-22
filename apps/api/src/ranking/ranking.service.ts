@@ -8,20 +8,13 @@ import { CriterionType } from '../shared/enums/criterion-type.enum';
 import { ClockService } from '../shared/time/clock.service';
 import { Vacancy } from '../vacancies/entities/vacancy.entity';
 import type { RankingQueryDto } from './dto/ranking-query.dto';
-import type {
-  CachedRanking,
-  RankingResponse,
-  RankingResultItem,
-} from './ranking.types';
+import type { CachedRanking, RankingResponse, RankingResultItem } from './ranking.types';
 import { CriterionStrategyRegistry } from './strategies/criterion-strategy.registry';
 
 const CACHE_KEY_PREFIX = 'ranking:v1:vacancy:';
 const CACHE_KEY_SUFFIX = ':results';
 
-const RANKING_TTL_SECONDS = Number.parseInt(
-  process.env.REDIS_RANKING_TTL_SECONDS ?? '60',
-  10,
-);
+const RANKING_TTL_SECONDS = Number.parseInt(process.env.REDIS_RANKING_TTL_SECONDS ?? '60', 10);
 
 const CRITERION_TYPE_ORDER = Object.values(CriterionType);
 
@@ -110,8 +103,7 @@ export class RankingService {
   private score(vacancy: Vacancy, candidates: Candidate[]): RankingResultItem[] {
     const asOf = this.clock.now();
     const criteria = [...(vacancy.criteria ?? [])].sort(
-      (a, b) =>
-        CRITERION_TYPE_ORDER.indexOf(a.type) - CRITERION_TYPE_ORDER.indexOf(b.type),
+      (a, b) => CRITERION_TYPE_ORDER.indexOf(a.type) - CRITERION_TYPE_ORDER.indexOf(b.type),
     );
 
     return candidates
@@ -146,8 +138,7 @@ export class RankingService {
       const needle = search.toLowerCase();
       results = results.filter(
         (item) =>
-          item.name.toLowerCase().includes(needle) ||
-          item.email.toLowerCase().includes(needle),
+          item.name.toLowerCase().includes(needle) || item.email.toLowerCase().includes(needle),
       );
     }
 

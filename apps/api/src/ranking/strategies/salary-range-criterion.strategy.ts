@@ -13,8 +13,6 @@ export class SalaryRangeCriterionStrategy implements CriterionStrategy {
     if (minSalary === null || maxSalary === null) {
       return false;
     }
-    return (
-      candidate.currentSalary >= minSalary && candidate.currentSalary <= maxSalary
-    );
+    return candidate.currentSalary >= minSalary && candidate.currentSalary <= maxSalary;
   }
 }

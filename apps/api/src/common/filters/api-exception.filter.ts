@@ -1,9 +1,4 @@
-import {
-  ArgumentsHost,
-  Catch,
-  HttpException,
-  type ExceptionFilter,
-} from '@nestjs/common';
+import { ArgumentsHost, Catch, HttpException, type ExceptionFilter } from '@nestjs/common';
 import type { FastifyReply, FastifyRequest } from 'fastify';
 import { AppLoggerService } from '../logging/app-logger.service';
 import type { ApiError, ApiFieldError } from '../types/api-error.type';
@@ -40,12 +35,7 @@ function isValidationResponse(value: unknown): value is ValidationResponse {
 }
 
 function isUniqueViolation(value: unknown): boolean {
-  return (
-    typeof value === 'object' &&
-    value !== null &&
-    'code' in value &&
-    value.code === '23505'
-  );
+  return typeof value === 'object' && value !== null && 'code' in value && value.code === '23505';
 }
 
 function httpExceptionMessage(response: string | object): string {
@@ -94,12 +84,7 @@ export class ApiExceptionFilter implements ExceptionFilter {
         return this.envelope(400, response.message, response.errors, path);
       }
 
-      return this.envelope(
-        exception.getStatus(),
-        httpExceptionMessage(response),
-        [],
-        path,
-      );
+      return this.envelope(exception.getStatus(), httpExceptionMessage(response), [], path);
     }
 
     this.logger.error('api.request.failed', exception);

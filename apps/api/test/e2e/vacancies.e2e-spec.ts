@@ -1,8 +1,5 @@
 import { Test } from '@nestjs/testing';
-import {
-  FastifyAdapter,
-  type NestFastifyApplication,
-} from '@nestjs/platform-fastify';
+import { FastifyAdapter, type NestFastifyApplication } from '@nestjs/platform-fastify';
 import { randomUUID } from 'node:crypto';
 import type { FastifyInstance } from 'fastify';
 import { DataSource } from 'typeorm';
@@ -60,9 +57,7 @@ describe('Vacancies (e2e)', () => {
       imports: [AppModule],
     }).compile();
 
-    app = moduleRef.createNestApplication<NestFastifyApplication>(
-      new FastifyAdapter(),
-    );
+    app = moduleRef.createNestApplication<NestFastifyApplication>(new FastifyAdapter());
     app.useGlobalPipes(createValidationPipe());
     await app.init();
     fastify = app.getHttpAdapter().getInstance();
@@ -93,11 +88,7 @@ describe('Vacancies (e2e)', () => {
     expect(typeof body.id).toBe('string');
     expect(body.name).toMatch(/^e2e-create-/);
     expect(body.criteria).toHaveLength(3);
-    expect(body.criteria.map((c) => c.type).sort()).toEqual([
-      'AGE',
-      'GENDER',
-      'SALARY_RANGE',
-    ]);
+    expect(body.criteria.map((c) => c.type).sort()).toEqual(['AGE', 'GENDER', 'SALARY_RANGE']);
 
     const age = body.criteria.find((c) => c.type === 'AGE');
     expect(age?.minAge).toBe(22);
@@ -190,9 +181,7 @@ describe('Vacancies (e2e)', () => {
       payload: {
         name: 'Bad Salary',
         description: 'minSalary > maxSalary',
-        criteria: [
-          { type: 'SALARY_RANGE', weight: 1, minSalary: 9000000, maxSalary: 1000000 },
-        ],
+        criteria: [{ type: 'SALARY_RANGE', weight: 1, minSalary: 9000000, maxSalary: 1000000 }],
       },
     });
 

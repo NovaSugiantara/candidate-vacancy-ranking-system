@@ -1,18 +1,12 @@
 import type { MigrationInterface, QueryRunner } from 'typeorm';
 
-export class CreateCandidateVacancySchema1790035200000
-  implements MigrationInterface
-{
+export class CreateCandidateVacancySchema1790035200000 implements MigrationInterface {
   async up(queryRunner: QueryRunner): Promise<void> {
-    await queryRunner.query(
-      `CREATE TYPE "candidate_gender" AS ENUM ('MALE', 'FEMALE')`,
-    );
+    await queryRunner.query(`CREATE TYPE "candidate_gender" AS ENUM ('MALE', 'FEMALE')`);
     await queryRunner.query(
       `CREATE TYPE "criterion_type" AS ENUM ('AGE', 'GENDER', 'SALARY_RANGE')`,
     );
-    await queryRunner.query(
-      `CREATE TYPE "criterion_gender" AS ENUM ('MALE', 'FEMALE', 'ANY')`,
-    );
+    await queryRunner.query(`CREATE TYPE "criterion_gender" AS ENUM ('MALE', 'FEMALE', 'ANY')`);
 
     await queryRunner.query(`
       CREATE TABLE "candidates" (
@@ -100,9 +94,7 @@ export class CreateCandidateVacancySchema1790035200000
   }
 
   async down(queryRunner: QueryRunner): Promise<void> {
-    await queryRunner.query(
-      `DROP INDEX "idx_vacancy_criteria_vacancy_id"`,
-    );
+    await queryRunner.query(`DROP INDEX "idx_vacancy_criteria_vacancy_id"`);
     await queryRunner.query(`DROP INDEX "uq_candidates_email_active"`);
     await queryRunner.query(`DROP TABLE "vacancy_criteria"`);
     await queryRunner.query(`DROP TABLE "vacancies"`);

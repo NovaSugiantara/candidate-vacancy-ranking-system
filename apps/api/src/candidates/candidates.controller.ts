@@ -34,9 +34,7 @@ export class CandidatesController {
   }
 
   @Get(':id')
-  findOne(
-    @Param('id', new ParseUUIDPipe()) id: string,
-  ): Promise<CandidateResponse> {
+  findOne(@Param('id', new ParseUUIDPipe()) id: string): Promise<CandidateResponse> {
     return this.candidatesService.findOne(id);
   }
 
