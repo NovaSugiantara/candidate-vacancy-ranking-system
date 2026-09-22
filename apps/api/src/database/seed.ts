@@ -12,10 +12,9 @@ async function seed(): Promise<void> {
         INSERT INTO "candidates" (
           "id", "name", "email", "birthdate", "gender", "current_salary", "deleted_at"
         ) VALUES
-          ('10000000-0000-4000-8000-000000000001', 'Alice Adams', 'alice.adams@example.test', '1998-06-15', 'FEMALE', 5500000.00, NULL),
-          ('10000000-0000-4000-8000-000000000002', 'Bob Brown', 'bob.brown@example.test', '1996-01-10', 'MALE', 8000000.00, NULL),
-          ('10000000-0000-4000-8000-000000000003', 'Carol Clark', 'carol.clark@example.test', '1997-07-20', 'FEMALE', 5000000.00, NULL),
-          ('10000000-0000-4000-8000-000000000004', 'David Diaz', 'david.diaz@example.test', '1980-03-05', 'MALE', 11000000.00, NULL)
+          ('10000000-0000-4000-8000-000000000001', 'Siti Rahayu', 'siti.r@example.com', '1996-05-15', 'FEMALE', 5500000.00, NULL),
+          ('10000000-0000-4000-8000-000000000002', 'Budi Santoso', 'budi.s@example.com', '1989-11-20', 'MALE', 8000000.00, NULL),
+          ('10000000-0000-4000-8000-000000000003', 'Indah Lestari', 'indah.l@example.com', '2002-03-01', 'FEMALE', 4000000.00, NULL)
         ON CONFLICT ("id") DO UPDATE SET
           "name" = EXCLUDED."name",
           "email" = EXCLUDED."email",
@@ -57,7 +56,7 @@ async function seed(): Promise<void> {
       `);
     });
 
-    logger.log('Seeded 4 candidates, 2 vacancies, and 6 criteria');
+    logger.log('Seeded 3 candidates, 2 vacancies, and 6 criteria');
   } finally {
     await dataSource.destroy();
   }
